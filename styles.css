@@ -187,7 +187,7 @@ body {
 .seal-area {
   position: absolute;
   /* Bottom tip of the top flap (slightly above dead-centre); nudge top/% if assets change */
-  top: 43%;
+  top: 63%;
   left: 50%;
   transform: translate(-50%, -52%);
   display: flex;

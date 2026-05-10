@@ -55,10 +55,92 @@ const isMobile = window.innerWidth < 768;
 const introOverlay      = document.getElementById("introOverlay");
 const invitationContent = document.getElementById("invitationContent");
 
+const ENVELOPE_IMG_URLS = [
+  "./assets/top_envelope_flap_true_transparent.png",
+  "./assets/bottomenvelope.png",
+  "./assets/leftenvelope.png",
+  "./assets/rightenvelope.png",
+  "./assets/wax-seal.png",
+];
+
+function preloadEnvelopeImages(urls) {
+  return Promise.all(
+    urls.map(
+      (src) =>
+        new Promise((resolve) => {
+          const im = new Image();
+          im.onload = () => resolve();
+          im.onerror = () => resolve();
+          im.src = src;
+        })
+    )
+  );
+}
+
+function lockIntroScroll() {
+  if (document.documentElement.classList.contains("intro-scroll-lock")) return;
+  const y = window.scrollY || document.documentElement.scrollTop || 0;
+  document.documentElement.dataset.introLockY = String(y);
+  document.documentElement.classList.add("intro-scroll-lock");
+  document.body.classList.add("intro-scroll-lock");
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${y}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+}
+
+function unlockIntroScroll() {
+  if (!document.documentElement.classList.contains("intro-scroll-lock")) return;
+  document.documentElement.classList.remove("intro-scroll-lock");
+  document.body.classList.remove("intro-scroll-lock");
+  document.body.style.removeProperty("position");
+  document.body.style.removeProperty("top");
+  document.body.style.removeProperty("left");
+  document.body.style.removeProperty("right");
+  document.body.style.removeProperty("width");
+  delete document.documentElement.dataset.introLockY;
+}
+
+let scrollHintInited = false;
+
+function initScrollHintAfterReveal() {
+  if (scrollHintInited || window.innerWidth >= 768) return;
+  scrollHintInited = true;
+
+  const dismiss = () => {
+    invitationContent.classList.add("scroll-hint-done");
+    window.removeEventListener("scroll", onScroll, { passive: true });
+    clearTimeout(autoFadeId);
+  };
+
+  function onScroll() {
+    if (window.scrollY > 40) dismiss();
+  }
+
+  const autoFadeId = setTimeout(dismiss, 9000);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.addEventListener("scroll", onScroll, { passive: true });
+    });
+  });
+}
+
 function revealContent() {
   introOverlay.classList.add("overlay-hidden");
   invitationContent.classList.add("content-visible");
   invitationContent.setAttribute("aria-hidden", "false");
+  unlockIntroScroll();
+  window.scrollTo(0, 0);
+  requestAnimationFrame(() => {
+    try {
+      ScrollTrigger.refresh();
+    } catch (_) {
+      /* noop */
+    }
+  });
+  initScrollHintAfterReveal();
 }
 
 if (!isMobile) {
@@ -73,6 +155,18 @@ if (!isMobile) {
   const sealRipple = document.getElementById("sealRipple");
   let opened = false;
   let inviteMusic = null;
+
+  lockIntroScroll();
+  introOverlay.setAttribute("aria-busy", "true");
+
+  const ENV_PRELOAD_MAX_WAIT_MS = 12000;
+  Promise.race([
+    preloadEnvelopeImages(ENVELOPE_IMG_URLS),
+    new Promise((resolve) => setTimeout(resolve, ENV_PRELOAD_MAX_WAIT_MS)),
+  ]).finally(() => {
+    introOverlay.classList.add("env-ready");
+    introOverlay.setAttribute("aria-busy", "false");
+  });
 
   function startInviteMusic() {
     if (!inviteMusic) {

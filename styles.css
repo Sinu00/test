@@ -53,6 +53,13 @@ body {
    ENVELOPE INTRO OVERLAY
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/* While envelope is closed on mobile, JS adds these — stops the invite scrolling underneath */
+html.intro-scroll-lock,
+body.intro-scroll-lock {
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
 .intro-overlay {
   position: fixed;
   inset: 0;
@@ -67,6 +74,49 @@ body {
   border-radius: 28px;
   overflow: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* Before flap images are ready: solid backdrop + no partial envelope paint */
+@media (max-width: 767px) {
+  .intro-overlay:not(.env-ready) {
+    background: var(--wine-section);
+  }
+
+  .intro-overlay:not(.env-ready) .env-scene {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .intro-overlay.env-ready {
+    background: transparent;
+    transition: background 0.45s ease;
+  }
+
+  .intro-overlay.env-ready .env-scene {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.4s ease;
+  }
+
+  .intro-overlay.env-ready .env-loading-hint {
+    display: none;
+  }
+}
+
+.env-loading-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 4vw, 18px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 248, 240, 0.9);
+  pointer-events: none;
 }
 
 /* Full-screen scene — flaps and seal live here */
@@ -306,6 +356,90 @@ body {
 .content-visible {
   opacity: 1 !important;
   transform: none !important;
+}
+
+/* Hint after envelope opens (mobile): invitation scrolls vertically */
+.scroll-hint {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    bottom: max(24px, env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 25;
+    padding: 10px 18px 14px;
+    border-radius: 999px;
+    background: rgba(249, 245, 238, 0.94);
+    box-shadow: 0 8px 28px rgba(22, 8, 18, 0.16);
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.5s ease,
+      visibility 0s linear 0.55s;
+  }
+
+  .scroll-hint__label {
+    font-family: Italiana, serif;
+    font-size: clamp(12px, 3.2vw, 15px);
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--wine);
+    white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  .scroll-hint__chev {
+    width: 9px;
+    height: 9px;
+    margin-top: -2px;
+    border-right: 2px solid var(--wine);
+    border-bottom: 2px solid var(--wine);
+    opacity: 0.88;
+    animation: scroll-hint-bob 1.35s ease-in-out infinite;
+  }
+
+  @keyframes scroll-hint-bob {
+    0%, 100% { transform: translateY(0) rotate(45deg); }
+    50%      { transform: translateY(6px) rotate(45deg); }
+  }
+
+  .invitation-content.content-visible:not(.scroll-hint-done) .scroll-hint {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity 0.55s ease 1.15s,
+      visibility 0s linear 1.15s;
+  }
+
+  .invitation-content.scroll-hint-done .scroll-hint {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.4s ease,
+      visibility 0s linear 0.45s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-hint__chev {
+      animation: none;
+    }
+
+    .scroll-hint,
+    .invitation-content.content-visible:not(.scroll-hint-done) .scroll-hint,
+    .invitation-content.scroll-hint-done .scroll-hint {
+      transition-duration: 0.01ms;
+      transition-delay: 0s !important;
+    }
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

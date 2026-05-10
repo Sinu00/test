@@ -34,12 +34,19 @@
     <link rel="stylesheet" href="./styles.css" />
     <!-- Preload hero video for instant playback -->
     <link rel="preload" as="video" href="./assets/herobackground%20video.MP4" />
+    <!-- Mobile envelope only — fetch early so images aren’t staggered on first paint -->
+    <link rel="preload" as="image" href="./assets/top_envelope_flap_true_transparent.png" media="(max-width: 767px)" />
+    <link rel="preload" as="image" href="./assets/bottomenvelope.png" media="(max-width: 767px)" />
+    <link rel="preload" as="image" href="./assets/leftenvelope.png" media="(max-width: 767px)" />
+    <link rel="preload" as="image" href="./assets/rightenvelope.png" media="(max-width: 767px)" />
+    <link rel="preload" as="image" href="./assets/wax-seal.png" media="(max-width: 767px)" />
   </head>
   <body>
     <main class="page">
 
       <!-- Envelope intro (mobile): paint bottom → top → sides (above top, overlap at centre) → seal; assets: top, bottomenvelope, leftenvelope, rightenvelope -->
       <section id="introOverlay" class="intro-overlay" aria-label="Open invitation">
+        <p class="env-loading-hint" id="envLoadingHint" aria-live="polite">Loading invitation…</p>
         <div class="env-scene" id="envScene">
           <div class="flap flap-top"></div>
           <div class="flap flap-bottom"></div>
@@ -56,6 +63,10 @@
 
       <!-- Main invitation content -->
       <section id="invitationContent" class="invitation-content" aria-hidden="true">
+        <div class="scroll-hint" id="scrollHint" role="status" aria-live="polite">
+          <span class="scroll-hint__label">Scroll to explore</span>
+          <span class="scroll-hint__chev" aria-hidden="true"></span>
+        </div>
         <div class="invitation-stack">
 
           <!-- Hero -->

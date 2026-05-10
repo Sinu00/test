@@ -208,8 +208,8 @@ body {
 
 /* Invisible circular tap target; wax art scales up on tap (see .is-tapped) */
 .seal-hit {
-  width: clamp(104px, 30vw, 168px);
-  height: clamp(104px, 30vw, 168px);
+  width: clamp(152px, 46vw, 256px);
+  height: clamp(152px, 46vw, 256px);
   border-radius: 50%;
   background: transparent url("./assets/wax-seal.png") center / contain no-repeat;
   border: none;

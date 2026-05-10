@@ -433,16 +433,22 @@ body {
 }
 
 .hero-copy {
-  padding-top: 56px;
   position: relative;
   z-index: 2;
   max-width: 92%;
   margin-left: auto;
   margin-right: auto;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding-top: 56px;
+  padding-bottom: 100px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Basmala — Lateef (same Arabic face as Qur’an verses) */
 .hero-bismillah {
+  flex-shrink: 0;
   margin: 0 0 18px;
   font-family: Lateef, serif;
   font-weight: 400;
@@ -455,6 +461,7 @@ body {
 }
 
 .hero-kicker {
+  flex-shrink: 0;
   margin: 0;
   font-family: "Imperial Script", cursive;
   font-weight: 400;
@@ -468,6 +475,7 @@ body {
 
 /* Date: Italiana (Santiago Orozco) */
 .hero-date {
+  flex-shrink: 0;
   margin: 6px 0 0;
   font-family: Italiana, serif;
   font-weight: 400;
@@ -484,16 +492,21 @@ body {
 }
 
 .hero-date-month {
-  font-weight: 400;
+  font-weight: 200;
   letter-spacing: 0.1em;
   text-transform: capitalize;
 }
 
 .hero-copy h1 {
-  margin: 159px 0 0 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  min-height: 0;
   font-family: "Imperial Script", cursive;
   font-weight: 400;
-  font-size: 80px;
+  font-size: 96px;
   line-height: 0.6;
   color: #fff;
   text-shadow: 0 4px 28px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -724,9 +737,11 @@ body {
 /* ── Countdown (cream band: dark type, SVG mask top + bottom) ──────────── */
 
 /*
- * Countdown mask SVG position — tune here only:
- *   --countdown-mask-top    → more negative = strip sits higher (farther above content)
- *   --countdown-mask-bottom → more negative = strip sits lower (farther below content)
+ * Countdown mask SVG — tune on `.sec-countdown-band` (or override in a media query):
+ *   --countdown-mask-top          → more negative = strip sits higher (above content)
+ *   --countdown-mask-bottom       → more negative = strip sits lower (below content)
+ *   --countdown-edge-shift-top    → translateX: positive = move art right, negative = left
+ *   --countdown-edge-shift-bottom → same for bottom SVG (after scaleY flip)
  */
 .sec-countdown-band {
   position: relative;
@@ -734,16 +749,18 @@ body {
   overflow: visible;
   --countdown-mask-top: -50px;
   --countdown-mask-bottom: -50px;
+  --countdown-edge-shift-top: 0px;
+  --countdown-edge-shift-bottom: 0px;
 }
 
 /*
- * Narrow + centre the decorations. No transforms needed — the global
- * band-edge CSS already has the correct orientations:
- *   band-edge--top  img → no transform  (jagged edge at top, sits at wine/cream seam)
- *   band-edge--bottom img → scaleY(-1)  (jagged edge at bottom, sits at cream/wine seam)
- * background-color: transparent lets the SVG shape show without a solid rectangle.
+ * Desktop/tablet: narrow centred mask. Mobile (see media query): countdown strips go
+ * full width so edges align with the cream band — avoids visible gaps at the sides.
+ * Global band-edge orientations:
+ *   band-edge--top  img → jagged edge at wine/cream seam
+ *   band-edge--bottom img → scaleY(-1), jagged edge at cream/wine seam
  */
-/* Shared rule — cream bands that use the narrow centred SVG mask */
+/* Shared rule — cream bands that use the SVG mask */
 .sec-countdown-band .band-edge,
 .sec-location-band .band-edge,
 .sec-details-band .band-edge {
@@ -762,6 +779,7 @@ body {
 .sec-countdown-band .band-edge--top img {
   position: relative;
   top: var(--countdown-mask-top);
+  transform: translateX(var(--countdown-edge-shift-top));
 }
 
 .sec-location-band .band-edge--bottom img {
@@ -772,6 +790,16 @@ body {
 .sec-countdown-band .band-edge--bottom img {
   position: relative;
   bottom: var(--countdown-mask-bottom);
+  transform: scaleY(-1) translateX(var(--countdown-edge-shift-bottom));
+}
+
+@media (max-width: 767px) {
+  .sec-countdown-band .band-edge {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 /* Shorthand replaces default `.band__inner` vertical padding (60px) for this block only */
@@ -1682,6 +1710,7 @@ button.rsvp-pill {
   .hero-panel     { width: 100vw; height: 100svh; min-height: 680px; }
   .hero-copy {
     padding-top: 8vw;
+    padding-bottom: min(28vw, 140px);
     max-width: 94%;
   }
   .hero-bismillah {
@@ -1698,8 +1727,7 @@ button.rsvp-pill {
     margin-top: 6px;
   }
   .hero-copy h1 {
-    margin-top: clamp(20px, 5vw, 36px);
-    font-size: clamp(52px, 13vw, 92px);
+    font-size: clamp(60px, 16vw, 112px);
   }
   .hero-copy h1 .ampersand {
     font-size: 0.5em;
@@ -1749,8 +1777,8 @@ button.rsvp-pill {
   }
 
   .sec-countdown-band {
-    --countdown-mask-top: -16px;
-    --countdown-mask-bottom: -16px;
+    --countdown-mask-top: -30px;
+    --countdown-mask-bottom: -30px;
   }
 
   .countdown-label { font-size: clamp(22px, 5.5vw, 36px); }

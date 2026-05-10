@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Suhail &amp; Shaharba — Wedding Day, 4 July 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Great+Vibes&family=Imperial+Script&family=Inter:wght@300;400;500&family=Italiana&family=Lateef:wght@400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <!-- Preload hero video for instant playback -->
+    <link rel="preload" as="video" href="./assets/herobackground%20video.MP4" />
+  </head>
+  <body>
+    <main class="page">
+
+      <!-- Envelope intro (mobile): paint bottom → top → sides (above top, overlap at centre) → seal; assets: top, bottomenvelope, leftenvelope, rightenvelope -->
+      <section id="introOverlay" class="intro-overlay" aria-label="Open invitation">
+        <div class="env-scene" id="envScene">
+          <div class="flap flap-top"></div>
+          <div class="flap flap-bottom"></div>
+          <div class="flap flap-left"></div>
+          <div class="flap flap-right"></div>
+          <div class="seal-area" id="sealArea">
+            <button class="seal-hit" id="sealBtn" type="button" aria-label="Open invitation">
+              <span class="seal-ripple" id="sealRipple" aria-hidden="true"></span>
+            </button>
+            <p class="tap-hint">Tap to open</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main invitation content -->
+      <section id="invitationContent" class="invitation-content" aria-hidden="true">
+        <div class="invitation-stack">
+
+          <!-- Hero -->
+          <div class="hero-panel">
+            <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="./assets/fountain-bg.png">
+              <source src="./assets/herobackground%20video.MP4" type="video/mp4">
+            </video>
+            <div class="hero-overlay" aria-hidden="true"></div>
+            <div class="hero-copy">
+              <p class="hero-bismillah" lang="ar" dir="rtl" translate="no" title="In the name of Allah, the Most Gracious, the Most Merciful">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+              <p class="hero-kicker">Wedding Date</p>
+              <p class="hero-date" aria-label="July 4, 2026">
+                <span class="hero-date-month">July</span><span class="hero-date-space"> </span><span class="hero-date-fig">04</span><span class="hero-date-space"> </span><span class="hero-date-fig">2026</span>
+              </p>
+              <h1>
+                Suhail
+                <span class="ampersand">&amp;</span>
+                Shaharba
+              </h1>
+            </div>
+            <div class="hero-flowers" aria-hidden="true">
+              <div class="hero-flowers-cluster">
+                <!-- DOM: back → front; CSS z-index controls final stacking -->
+                <img class="flower f-white-left"  src="./assets/flower-white-large.webp" alt="" />
+                <img class="flower f-white-right" src="./assets/flower-white-large.webp" alt="" />
+                <img class="flower f-white-bud"   src="./assets/flower-white-bud.webp"   alt="" />
+                <img class="flower f-red-small"   src="./assets/flower-red-small.png"     alt="" />
+                <img class="flower f-red-medium"  src="./assets/flower-red-medium.webp"   alt="" />
+                <img class="flower f-red-large"   src="./assets/flower-red-large.webp"    alt="" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Welcome + countdown -->
+          <section class="band band--wine band--welcome-countdown" aria-label="Welcome">
+            <div class="band__inner">
+              <div class="sec-welcome">
+                <div class="welcome-inner">
+                  <h2 class="welcome-heading">Dear Family &amp; Friends,</h2>
+                  <p class="welcome-body">
+                    With hearts full of gratitude to Allah, we are blessed to invite you to our wedding ceremony as we begin our journey as husband and wife.
+                  </p>
+                  <p class="welcome-body">
+                    Your duas and presence would mean everything to us. We hope you will celebrate this special day with us.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Countdown -->
+          <section class="band band--cream sec-countdown-band" aria-label="Countdown">
+            <div class="band-edge band-edge--top" aria-hidden="true">
+              <img src="./assets/Mask_group_2_1_Trace.svg" alt="" />
+            </div>
+            <div class="band__inner sec-countdown-inner">
+              <p class="countdown-label">Our Wedding Day Begins In</p>
+              <div class="countdown">
+                <div class="cd-unit">
+                  <span id="cd-days" class="cd-num">00</span>
+                  <span class="cd-lbl">Days</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <span id="cd-hours" class="cd-num">00</span>
+                  <span class="cd-lbl">Hours</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <span id="cd-mins" class="cd-num">00</span>
+                  <span class="cd-lbl">Minutes</span>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                  <span id="cd-secs" class="cd-num">00</span>
+                  <span class="cd-lbl">Seconds</span>
+                </div>
+              </div>
+            </div>
+            <div class="band-edge band-edge--bottom" aria-hidden="true">
+              <img src="./assets/Mask_group_2_1_Trace.svg" alt="" />
+            </div>
+          </section>
+
+          <!-- Schedule of Events -->
+          <section class="band band--wine sec-schedule-band" aria-label="Schedule of Events">
+            <div class="sec-schedule-inner">
+              <h2 class="sch-heading">Schedule of Events</h2>
+              <div class="schedule-timeline" id="scheduleTimeline">
+                <img class="timeline-flower" id="timelineFlower"
+                     src="./assets/flower-white-large.webp" alt="" aria-hidden="true" />
+                <ul class="schedule-list">
+                  <li class="schedule-item">
+                    <span class="sch-time">2:00 pm</span>
+                    <span class="sch-dot"></span>
+                    <span class="sch-event">Guest arrival<br>&amp; seating</span>
+                  </li>
+                  <li class="schedule-item">
+                    <span class="sch-time">3:30 pm</span>
+                    <span class="sch-dot"></span>
+                    <span class="sch-event">Nikah<br>ceremony @ Pearl View</span>
+                  </li>
+                  <li class="schedule-item">
+                    <span class="sch-time">4:00 pm</span>
+                    <span class="sch-dot"></span>
+                    <span class="sch-event">Feast</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Location -->
+          <section class="band band--cream sec-location-band" aria-label="Location">
+            <div class="band-edge band-edge--top" aria-hidden="true">
+              <img src="./assets/Mask_group_2_1_Trace.svg" alt="" />
+            </div>
+            <div class="sec-location-inner">
+              <h2 class="location-heading">Location</h2>
+              <p class="venue-name">Pearl View</p>
+              <p class="venue-date">Saturday, 4 July 2026</p>
+              <div class="venue-map-block">
+                <a
+                  class="venue-map-link"
+                  href="https://maps.app.goo.gl/GtTNb6quqVxVQrTf8?g_st=ic"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open Google Maps directions to Pearl View"
+                >Location</a>
+                <p class="venue-map-hint">Click to get directions</p>
+              </div>
+              <img class="venue-illustration" src="./assets/fountain-bg.png" alt="Pearl View — replace with a photo of your home if you like" />
+            </div>
+            <div class="band-edge band-edge--bottom" aria-hidden="true">
+              <img src="./assets/Mask_group_2_1_Trace.svg" alt="" />
+            </div>
+          </section>
+
+          <!-- Quranic verses: Arabic (Lateef) + English (Italiana) -->
+          <section class="band band--wine sec-quran-band" aria-label="Verses from the Qur'an">
+            <div class="sec-quran-inner">
+              <h2 class="quran-heading">From the Qur&rsquo;an</h2>
+              <blockquote class="quran-verse" cite="https://quran.com/30/21">
+                <p class="quran-ar" lang="ar" dir="rtl">
+                  وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ
+                </p>
+                <p class="quran-en">
+                  And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy. Indeed in that are signs for a people who give thought.
+                </p>
+                <p class="quran-ref">Surah Ar-Rūm &middot; 30:21</p>
+              </blockquote>
+              <blockquote class="quran-verse" cite="https://quran.com/2/201">
+                <p class="quran-ar" lang="ar" dir="rtl">
+                  رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
+                </p>
+                <p class="quran-en">
+                  Our Lord, give us good in this world and good in the Hereafter and protect us from the punishment of the Fire.
+                </p>
+                <p class="quran-ref">Surah al-Baqarah &middot; 2:201</p>
+              </blockquote>
+              <p class="quran-trans-note">English meanings above follow <cite>Sahih International</cite>.</p>
+            </div>
+          </section>
+
+          <!-- Details -->
+          <section class="band band--cream sec-details-band" aria-label="Details">
+            <div class="band-edge band-edge--top" aria-hidden="true">
+              <img src="./assets/Mask_group_2_1_Trace.svg" alt="" />
+            </div>
+            <div class="sec-details-inner">
+              <h2 class="details-heading">Details</h2>
+              <p class="details-event-note">If you need help or encounter any problem during the event,<br>please contact our event management team:</p>
+              <p class="details-event-org">Adspot Events</p>
+              <p class="details-gift">Your presence and duas are the greatest gifts.</p>
+            </div>
+          </section>
+
+          <!-- Confirm Attendance -->
+          <section class="band band--wine sec-rsvp-band" aria-label="Confirm Attendance">
+            <!-- Centered on Details/RSVP seam: half in cream, half in wine (needs to live in RSVP for correct paint order) -->
+            <div class="details-flowers details-flowers--seam" aria-hidden="true">
+              <div class="details-flowers-cluster" id="detailsFlowers">
+                <img class="df df-white-left"  src="./assets/flower-white-large.webp" alt="" />
+                <img class="df df-white-right" src="./assets/flower-white-large.webp" alt="" />
+                <img class="df df-white-bud"   src="./assets/flower-white-bud.webp"   alt="" />
+                <img class="df df-red-small"   src="./assets/flower-red-small.png"     alt="" />
+                <img class="df df-red-medium"  src="./assets/flower-red-medium.webp"   alt="" />
+                <img class="df df-red-large"   src="./assets/flower-red-large.webp"    alt="" />
+              </div>
+            </div>
+            <div class="sec-rsvp-inner">
+              <h2 class="rsvp-heading">Confirm Your Attendance</h2>
+              <p class="rsvp-desc">So we can plan seating, food, and space with care,<br>kindly let us know if you will join us.</p>
+              <button type="button" class="rsvp-pill" id="rsvpOpenBtn" aria-haspopup="dialog" aria-controls="rsvpDialog">
+                Click here
+              </button>
+              <p class="rsvp-closing">We pray Allah blesses our union and yours.</p>
+              <p class="rsvp-heading">Hope to see you there!</p>
+              <p class="rsvp-names">Suhail &amp; Shaharba</p>
+              <img class="rsvp-photo" src="./assets/couple.jpg" alt="Suhail and Shaharba" />
+            </div>
+          </section>
+
+        </div><!-- /.invitation-stack -->
+      </section>
+
+    </main>
+
+    <!-- RSVP submissions → Formspree dashboard: https://formspree.io -->
+    <dialog id="rsvpDialog" class="rsvp-dialog" aria-labelledby="rsvpDialogTitle">
+      <div class="rsvp-dialog__panel">
+        <button type="button" class="rsvp-dialog__x" id="rsvpDialogCloseX" aria-label="Close dialog">&times;</button>
+        <h3 id="rsvpDialogTitle" class="rsvp-dialog__title"></h3>
+
+        <div id="rsvpDialogFormWrap">
+          <p class="rsvp-dialog__text">
+            Please share a few details so we can plan seating and hospitality.
+          </p>
+          <form
+            id="rsvpModalForm"
+            class="rsvp-dialog__form"
+            action="https://formspree.io/f/xwvywdaa"
+            method="POST"
+            novalidate
+          >
+            <input type="hidden" name="_subject" value="RSVP — Suhail &amp; Shaharba (4 July 2026)" />
+            <p class="rsvp-dialog__hp" aria-hidden="true">
+              <label>Don&rsquo;t fill this out: <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+            </p>
+
+            <div class="rsvp-dialog__field">
+              <label class="rsvp-dialog__label" for="rsvpGuestName">Your name</label>
+              <input class="rsvp-dialog__input" type="text" id="rsvpGuestName" name="guest_name" required autocomplete="name" maxlength="120" placeholder="Full name" />
+            </div>
+
+            <fieldset class="rsvp-dialog__fieldset">
+              <legend class="rsvp-dialog__legend">Will you attend the marriage?</legend>
+              <div class="rsvp-dialog__radios">
+                <label class="rsvp-dialog__radio">
+                  <input type="radio" name="will_attend" value="Yes" required />
+                  <span>Yes</span>
+                </label>
+                <label class="rsvp-dialog__radio">
+                  <input type="radio" name="will_attend" value="No" required />
+                  <span>No</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="rsvp-dialog__field" id="rsvpGuestCountWrap">
+              <label class="rsvp-dialog__label" for="rsvpGuestCount">How many people will come (including yourself)?</label>
+              <input class="rsvp-dialog__input" type="number" id="rsvpGuestCount" name="guest_count" min="1" max="50" step="1" inputmode="numeric" placeholder="e.g. 2" disabled />
+              <p class="rsvp-dialog__hint" id="rsvpGuestCountHint">Select whether you will attend first.</p>
+            </div>
+
+            <p class="rsvp-dialog__error" id="rsvpDialogError" hidden role="alert"></p>
+
+            <button type="submit" class="rsvp-dialog__submit" id="rsvpDialogSubmit">Submit RSVP</button>
+            <button type="button" class="rsvp-dialog__dismiss" id="rsvpDialogDismiss">Cancel</button>
+          </form>
+        </div>
+
+        <div id="rsvpDialogThanks" class="rsvp-dialog__thanks" hidden role="status">
+          <p class="rsvp-dialog__thanks-title">Thank you</p>
+          <p class="rsvp-dialog__text">Your RSVP has been recorded. We are grateful — see you at Pearl View, InshaAllah.</p>
+          <button type="button" class="rsvp-dialog__submit" id="rsvpDialogThanksClose">Close</button>
+        </div>
+      </div>
+    </dialog>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

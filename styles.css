@@ -1,0 +1,1758 @@
+:root {
+  --wine: #660220;
+  --wine-deep: #660220;
+  --wine-section: #660220;
+  --cream: #f9f5ee;
+  --ink: #f8f8f8;
+  --text-dark: #1e1212;
+  --text-mid: #5a4040;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  background: var(--wine);
+  color: var(--ink);
+}
+
+.page {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background: var(--wine);
+}
+
+.page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(50% - 220px),
+    var(--wine-deep) calc(50% - 220px),
+    var(--wine-deep) calc(50% + 220px),
+    transparent calc(50% + 220px),
+    transparent 100%
+  );
+  opacity: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ENVELOPE INTRO OVERLAY
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  /* Transparent so the hero / invitation shows through flap gaps while opening */
+  background: transparent;
+  /*
+   * border-radius + overflow: hidden gives the envelope rounded outer corners.
+   * As flaps slide off-screen they clip naturally at the rounded edge —
+   * this looks far more premium than a hard viewport cutoff.
+   */
+  border-radius: 28px;
+  overflow: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* Full-screen scene — flaps and seal live here */
+.env-scene {
+  position: absolute;
+  inset: 0;
+}
+
+/* ── Flaps (four PNGs: top, bottomenvelope, leftenvelope, rightenvelope) ─ */
+
+.flap {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Default full scene; side/bottom flaps override bounds below */
+
+/*
+ * Art on ::before; parent only slides.
+ *
+ * Why not background-size: cover on full-screen layers?
+ * Top PNG is landscape (~990×697). On a tall phone, “cover” scales by height,
+ * blowing the triangle up to ~full viewport — the “giant top slab” bug.
+ */
+.flap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Top triangle: lock width to viewport; height follows asset aspect ratio */
+.flap-top::before {
+  background-image: url("./assets/top_envelope_flap_true_transparent.png");
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+/* Dedicated bottom flap art (points up toward center) */
+.flap-bottom::before {
+  background-image: url("./assets/bottomenvelope.png");
+  background-position: center bottom;
+  background-size: 100% auto;
+}
+
+/*
+ * Paint order: bottom (1) → top (3) → left (5) → right (6) → seal (10).
+ * Sides sit above the top/bottom triangles so their paper fills the centre “X” gap
+ * (asset tips + 50% strips left a hole over the hero). Wider strips + slight scale
+ * pull the side art past the midline; overlap at centre reads as one fold.
+ */
+.flap-bottom {
+  top: 30%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  z-index: 7;
+  transition: transform 4200ms cubic-bezier(0.28, 1, 0.22, 1) 720ms;
+}
+
+.flap-top {
+  inset: 0;
+  overflow: visible;
+  z-index: 8;
+  transition: transform 4000ms cubic-bezier(0.28, 1, 0.22, 1) 380ms;
+}
+
+.flap-left {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 85%;
+  overflow: hidden;
+  z-index: 5;
+  transition: transform 4100ms cubic-bezier(0.28, 1, 0.22, 1) 0ms;
+}
+
+/* Tip toward centre; scale pulls the triangle tip across the midline */
+.flap-left::before {
+  background-image: url("./assets/leftenvelope.png");
+  background-position: right center;
+  background-size: auto 100%;
+  transform: scale(1.08);
+  transform-origin: right center;
+}
+
+.flap-right {
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 85%;
+  overflow: hidden;
+  z-index: 6;
+  transition: transform 4100ms cubic-bezier(0.28, 1, 0.22, 1) 0ms;
+}
+
+.flap-right::before {
+  background-image: url("./assets/rightenvelope.png");
+  background-position: left center;
+  background-size: auto 100%;
+  transform: scale(1.08);
+  transform-origin: left center;
+}
+
+.env-scene.is-open .flap-left   { transform: translateX(-120vw); }
+.env-scene.is-open .flap-right  { transform: translateX( 120vw); }
+.env-scene.is-open .flap-top    { transform: translateY(-120vh); }
+.env-scene.is-open .flap-bottom { transform: translateY( 120vh); }
+
+/* ── Seal area — sits on the top flap tip (above flap stack z-index: 10) ─ */
+
+.seal-area {
+  position: absolute;
+  /* Bottom tip of the top flap (slightly above dead-centre); nudge top/% if assets change */
+  top: 43%;
+  left: 50%;
+  transform: translate(-50%, -52%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  transition: opacity 0.95s ease-out 0.06s;
+}
+
+.seal-area.is-tapped {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.seal-area.is-tapped .tap-hint {
+  animation: none;
+}
+
+/* Invisible circular tap target; wax art scales up on tap (see .is-tapped) */
+.seal-hit {
+  width: clamp(104px, 30vw, 168px);
+  height: clamp(104px, 30vw, 168px);
+  border-radius: 50%;
+  background: transparent url("./assets/wax-seal.png") center / contain no-repeat;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transform: scale(1);
+  transition: transform 0.95s cubic-bezier(0.2, 0.85, 0.25, 1);
+}
+
+.seal-area.is-tapped .seal-hit {
+  transform: scale(2.15);
+}
+
+/* Warm golden ripple — gives immediate tactile-like feedback on tap */
+.seal-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 225, 160, 0.75) 0%,
+    rgba(255, 190,  80, 0.35) 45%,
+    transparent 70%
+  );
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.seal-ripple.is-bursting {
+  animation: ripple-burst 0.7s cubic-bezier(0.2, 0.8, 0.35, 1) forwards;
+}
+
+@keyframes ripple-burst {
+  0%   { transform: scale(0);   opacity: 1;   }
+  25%  { transform: scale(0.6); opacity: 1;   }
+  100% { transform: scale(4.5); opacity: 0;   }
+}
+
+/* "Tap to open" — breathes to draw the eye without screaming */
+.tap-hint {
+  margin: 16px 0 0;
+  font-family: Italiana, serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(14px, 4vw, 18px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wine);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  animation: hint-breathe 3s ease-in-out infinite;
+}
+
+@keyframes hint-breathe {
+  0%, 100% { opacity: 0.95; }
+  50%       { opacity: 0.55; }
+}
+
+/*
+ * Mobile envelope: invitation sits under the intro layer (z-index) so the hero
+ * shows through transparent PNG regions while flaps open — no solid “silver” plate.
+ */
+@media (max-width: 767px) {
+  .invitation-content {
+    position: relative;
+    z-index: 0;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: none;
+  }
+
+  .invitation-content.content-visible {
+    pointer-events: auto;
+  }
+}
+
+/* ── Desktop: skip intro, show invite directly ─────────────────────────── */
+
+@media (min-width: 768px) {
+  .intro-overlay      { display: none; }
+  .invitation-content { opacity: 1 !important; transform: none !important; }
+}
+
+/* ── Shared state classes (applied by JS) ─────────────────────────────── */
+
+.overlay-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.content-visible {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INVITATION CONTENT
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.invitation-content {
+  min-height: 100vh;
+  opacity: 0;
+  transform: translateY(14px) scale(0.99);
+  transition: opacity 0.75s ease, transform 0.75s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.invitation-stack {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  box-shadow: none;
+}
+
+/* ── Full-bleed bands (narrow inner column) ────────────────────────────── */
+
+.band {
+  width: 100%;
+  position: relative;
+}
+
+.band--wine {
+  background-color: var(--wine-section);
+  color: rgba(253, 251, 248, 0.96);
+}
+
+.band--cream {
+  background-color: var(--cream);
+  color: var(--text-dark);
+}
+
+.band__inner {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: min(440px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 60px 32px;
+}
+
+.band-edge {
+  width: 100%;
+  line-height: 0;
+  overflow: hidden;
+  background-color: var(--wine-section);
+}
+
+.band-edge img {
+  display: block;
+  width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}
+
+.band-edge--top img {
+  margin-bottom: -1px;
+}
+
+.band-edge--bottom img {
+  transform: scaleY(-1);
+  margin-top: -1px;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────── */
+
+.hero-panel {
+  width: 100%;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100svh;
+  min-height: 680px;
+  background: #0c0714;
+  position: relative;
+  text-align: center;
+  overflow: visible;
+}
+
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  /* Base scrim + vignette + bottom falloff — keeps copy readable on bright video */
+  background:
+    radial-gradient(
+      ellipse 95% 70% at 50% 38%,
+      rgba(0, 0, 0, 0.08) 0%,
+      rgba(0, 0, 0, 0.28) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.18) 0%,
+      rgba(0, 0, 0, 0.06) 42%,
+      rgba(0, 0, 0, 0.12) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(6, 2, 16, 0.55) 0%,
+      rgba(12, 6, 28, 0.26) 30%,
+      rgba(12, 6, 28, 0.26) 62%,
+      rgba(4, 1, 10, 0.82) 100%
+    );
+}
+
+.hero-copy {
+  padding-top: 56px;
+  position: relative;
+  z-index: 2;
+  max-width: 92%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Basmala — Lateef (same Arabic face as Qur’an verses) */
+.hero-bismillah {
+  margin: 0 0 18px;
+  font-family: Lateef, serif;
+  font-weight: 400;
+  font-size: clamp(26px, 5vw, 36px);
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.94);
+  text-align: center;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.45), 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.hero-kicker {
+  margin: 0;
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.55), 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* Date: Italiana (Santiago Orozco) */
+.hero-date {
+  margin: 6px 0 0;
+  font-family: Italiana, serif;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+}
+
+.hero-date-fig {
+  font-variant-numeric: lining-nums;
+  letter-spacing: 0.08em;
+}
+
+.hero-date-month {
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: capitalize;
+}
+
+.hero-copy h1 {
+  margin: 159px 0 0 0;
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: 80px;
+  line-height: 0.6;
+  color: #fff;
+  text-shadow: 0 4px 28px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.hero-copy h1 .ampersand {
+  display: block;
+  margin-top: 2px;
+  margin-bottom: 0;
+  font-size: 0.52em;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.hero-flowers {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -90px;
+  height: 320px;
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+
+/*
+ * Cluster is 620px wide, centered on the card.
+ * On a 440px card this spills 90px left + right into the wine gutters.
+ * Rotations on f-red-small / f-red-large are set via gsap.set() in script.js.
+ */
+.hero-flowers-cluster {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 620px;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+.hero-flowers-cluster .flower {
+  position: absolute;
+  user-select: none;
+  -webkit-user-drag: none;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.38));
+}
+
+/* ── Bouquet z-stack: back (whites) → mid (buds) → front (reds) ─────────── */
+/* Positions are in the 620px cluster. Card left = cluster left + 90px.       */
+/* container bottom = 90px below hero edge;                                   */
+/* flower bottom B → bottom-edge at (90−B)px below hero edge.                */
+
+.f-white-left  { z-index: 1; width: 176px; left: 120px; bottom:  55px; }
+.f-white-right { z-index: 1; width: 176px; left: 280px; bottom:  52px; }
+.f-white-bud   { z-index: 2; width:  66px; left: 295px; bottom: 135px; }
+.f-ruby-bud    { z-index: 3; width:  66px; left: 400px; bottom:  22px; }
+.f-red-small   { z-index: 4; width: 110px; left:  70px; bottom:  65px; }
+.f-red-medium  { z-index: 5; width: 198px; left: 220px; bottom:  70px; }
+.f-red-large   { z-index: 6; width: 286px; left: 310px; bottom:  58px; }
+
+/* ── Shared section styles (bands carry background; inner column uses band__inner) ── */
+
+.inv-sec {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  background: transparent;
+  color: inherit;
+}
+
+.orn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px auto;
+  max-width: 160px;
+}
+
+.orn-line    { flex: 1; height: 1px; opacity: 0.28; }
+.orn-diamond { width: 6px; height: 6px; flex-shrink: 0; transform: rotate(45deg); opacity: 0.55; }
+
+.band--cream .orn-line    { background: var(--wine); }
+.band--cream .orn-diamond { background: var(--wine); }
+.band--wine .orn-line     { background: rgba(249, 245, 238, 0.35); }
+.band--wine .orn-diamond  { background: rgba(249, 245, 238, 0.55); }
+
+.sec-title {
+  font-family: "Great Vibes", cursive;
+  font-weight: 400;
+  font-size: clamp(28px, 6vw, 36px);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--wine);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.band--cream .sec-title {
+  color: var(--wine);
+}
+
+.sec-title--lt {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* ── Welcome (wine panel + hanging bouquet) ─────────────────────────────── */
+
+.band--welcome-countdown .band__inner {
+  padding: 32px 32px 40px;
+}
+
+.sec-welcome {
+  background: transparent;
+  color: rgba(253, 251, 248, 0.96);
+  padding: 0 0 0;
+  margin: 0;
+}
+
+.welcome-flowers {
+  position: relative;
+  height: 92px;
+  overflow: hidden;
+  margin: 0 -32px 28px;
+  pointer-events: none;
+}
+
+.welcome-flowers-cluster {
+  --wf-cluster-w: 340px;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: var(--wf-cluster-w);
+  height: 176px;
+  transform: translateX(-50%);
+}
+
+.welcome-flowers-cluster .welcome-flower {
+  position: absolute;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.35));
+}
+
+.wf-white-back {
+  z-index: 1;
+  width: 100px;
+  left: 100px;
+  bottom: 12px;
+}
+
+.wf-bud {
+  z-index: 2;
+  width: 30px;
+  left: 56px;
+  bottom: 94px;
+}
+
+.wf-red-far {
+  z-index: 3;
+  width: 44px;
+  left: -10px;
+  bottom: 4px;
+}
+
+.wf-white-left {
+  z-index: 4;
+  width: 88px;
+  left: 12px;
+  bottom: 24px;
+}
+
+.wf-red-center {
+  z-index: 5;
+  width: 106px;
+  left: 62px;
+  bottom: 6px;
+}
+
+.wf-red-accent {
+  z-index: 6;
+  width: 36px;
+  left: 176px;
+  bottom: -4px;
+}
+
+.wf-red-hero {
+  z-index: 7;
+  width: 152px;
+  left: 108px;
+  bottom: -12px;
+}
+
+.welcome-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.welcome-heading {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(32px, 2.6vw, 48px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.98);
+  margin: 0 0 22px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.sec-welcome .welcome-body {
+  font-family: Italiana, serif;
+  font-style: normal;
+  font-weight: 400;
+  font-size: clamp(16px, 1.2vw, 19px);
+  line-height: 1.75;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0 auto 1em;
+  max-width: 380px;
+  text-align: center;
+}
+
+.sec-welcome .welcome-body:last-of-type {
+  margin-bottom: 0;
+}
+
+/* ── Countdown (cream band: dark type, SVG mask top + bottom) ──────────── */
+
+/*
+ * Countdown mask SVG position — tune here only:
+ *   --countdown-mask-top    → more negative = strip sits higher (farther above content)
+ *   --countdown-mask-bottom → more negative = strip sits lower (farther below content)
+ */
+.sec-countdown-band {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  --countdown-mask-top: -50px;
+  --countdown-mask-bottom: -50px;
+}
+
+/*
+ * Narrow + centre the decorations. No transforms needed — the global
+ * band-edge CSS already has the correct orientations:
+ *   band-edge--top  img → no transform  (jagged edge at top, sits at wine/cream seam)
+ *   band-edge--bottom img → scaleY(-1)  (jagged edge at bottom, sits at cream/wine seam)
+ * background-color: transparent lets the SVG shape show without a solid rectangle.
+ */
+/* Shared rule — cream bands that use the narrow centred SVG mask */
+.sec-countdown-band .band-edge,
+.sec-location-band .band-edge,
+.sec-details-band .band-edge {
+  width: min(520px, 88%);
+  margin-left: auto;
+  margin-right: auto;
+  background-color: transparent;
+}
+
+.sec-location-band .band-edge--top img,
+.sec-details-band .band-edge--top img {
+  position: relative;
+  top: -50px;
+}
+
+.sec-countdown-band .band-edge--top img {
+  position: relative;
+  top: var(--countdown-mask-top);
+}
+
+.sec-location-band .band-edge--bottom img {
+  position: relative;
+  bottom: -50px;
+}
+
+.sec-countdown-band .band-edge--bottom img {
+  position: relative;
+  bottom: var(--countdown-mask-bottom);
+}
+
+/* Shorthand replaces default `.band__inner` vertical padding (60px) for this block only */
+.band__inner.sec-countdown-inner {
+  box-sizing: border-box;
+  max-width: min(640px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 32px;
+  text-align: center;
+}
+
+.countdown-label {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(28px, 2.4vw, 42px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--wine);
+  margin: 0 0 0.08em;
+}
+
+.sec-countdown-inner .cd-lbl {
+  margin-top: 4px;
+}
+
+.sec-countdown-inner .cd-sep {
+  padding-top: 0;
+  align-self: center;
+}
+
+.countdown {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(4px, 0.8vw, 12px);
+  flex-wrap: nowrap;
+}
+
+.cd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.cd-num {
+  font-family: Italiana, serif;
+  font-size: clamp(52px, 5.4vw, 88px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--text-dark);
+}
+
+.cd-lbl {
+  font-family: Italiana, serif;
+  font-size: clamp(10px, 0.8vw, 13px);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: var(--text-mid);
+  margin-top: 6px;
+}
+
+.cd-sep {
+  font-family: Italiana, serif;
+  font-size: clamp(40px, 4.2vw, 68px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--text-dark);
+  opacity: 0.45;
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding-top: 0.04em;
+}
+
+/* ── Schedule ──────────────────────────────────────────────────────────── */
+
+.sec-schedule-inner {
+  max-width: min(480px, 100%);
+  margin: 0 auto;
+  padding: 32px 32px 40px;
+  text-align: center;
+}
+
+.sch-heading {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(32px, 2.6vw, 48px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.96);
+  margin: 0 0 22px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+}
+
+.schedule-timeline {
+  position: relative;
+}
+
+/* Flower that tracks scroll position */
+.timeline-flower {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%) translateY(-50%);
+  width: 68px;
+  height: auto;
+  z-index: 3;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 12px rgba(0, 0, 0, 0.4));
+}
+
+.schedule-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* Vertical timeline line */
+.schedule-list::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateX(-50%);
+}
+
+.schedule-item {
+  display: grid;
+  grid-template-columns: 1fr 18px 1fr;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 0;
+  position: relative;
+  border: none;
+}
+
+.schedule-item:first-child { border-top: none; }
+
+.sch-time {
+  font-family: Italiana, serif;
+  font-size: clamp(26px, 2.2vw, 38px);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: right;
+  line-height: 1;
+  letter-spacing: 0.06em;
+}
+
+.sch-dot {
+  width: 9px;
+  height: 9px;
+  background: rgba(255, 255, 255, 0.65);
+  transform: rotate(45deg);
+  justify-self: center;
+  position: relative;
+  z-index: 1;
+  border-radius: 0;
+}
+
+.sch-event {
+  font-family: Italiana, serif;
+  font-size: clamp(13px, 1.05vw, 16px);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.78);
+  text-align: left;
+  letter-spacing: 0.05em;
+  line-height: 1.55;
+  text-transform: none;
+}
+
+/* ── Location ──────────────────────────────────────────────────────────── */
+
+.sec-location-inner {
+  max-width: min(620px, 100%);
+  margin: 0 auto;
+  padding: 0 32px;
+  text-align: center;
+}
+
+.location-heading {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(32px, 2.6vw, 48px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--wine);
+  margin: 0 0 22px;
+}
+
+.venue-name {
+  font-family: Italiana, serif;
+  font-size: clamp(22px, 2vw, 32px);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--text-dark);
+  line-height: 1.25;
+  margin: 0 0 8px;
+}
+
+.venue-date {
+  font-family: Italiana, serif;
+  font-size: clamp(18px, 1.55vw, 24px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-dark);
+  line-height: 1.35;
+  margin: 0 0 14px;
+}
+
+.venue-map-block {
+  margin: 0 0 20px;
+}
+
+.venue-map-link {
+  display: inline-block;
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.15vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--wine);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid rgba(102, 2, 32, 0.35);
+  border-radius: 999px;
+  padding: 14px 52px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.venue-map-link:hover {
+  background: var(--wine);
+  color: #fff;
+  border-color: var(--wine);
+}
+
+.venue-map-hint {
+  font-family: Italiana, serif;
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--text-mid);
+  margin: 12px 0 0;
+  line-height: 1.5;
+}
+
+.venue-illustration {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  border-radius: 4px;
+  filter: sepia(0.15) contrast(1.05);
+}
+
+/* ── Quranic verses (replaces former Dress Code band) ───────────────────── */
+
+.sec-quran-inner {
+  max-width: min(540px, 100%);
+  margin: 0 auto;
+  padding: 32px 32px 40px;
+  text-align: center;
+}
+
+.quran-heading {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(32px, 2.6vw, 48px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.96);
+  margin: 0 0 28px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+}
+
+.quran-verse {
+  margin: 0 0 32px;
+  padding: 0;
+  border: none;
+  quotes: none;
+}
+
+.quran-verse:last-of-type {
+  margin-bottom: 24px;
+}
+
+.quran-ar {
+  font-family: Lateef, serif;
+  font-weight: 400;
+  font-size: clamp(23px, 3.8vw, 34px);
+  line-height: 2;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.97);
+  margin: 0 0 18px;
+  text-align: center;
+  font-feature-settings: "kern" 1;
+}
+
+.quran-en {
+  font-family: Italiana, serif;
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.86);
+  margin: 0 0 12px;
+  text-align: center;
+}
+
+.quran-ref {
+  font-family: Italiana, serif;
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.52);
+  margin: 0;
+}
+
+.quran-trans-note {
+  font-family: Italiana, serif;
+  font-size: clamp(11px, 0.95vw, 13px);
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.quran-trans-note cite {
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ── Details ─────────────────────────────────────────────────────────────── */
+
+.sec-details-band {
+  position: relative;
+  overflow: visible;
+}
+
+.sec-details-inner {
+  max-width: min(520px, 100%);
+  margin: 0 auto;
+  padding: 32px 32px clamp(120px, 26vw, 200px);
+  text-align: center;
+}
+
+.details-heading {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(32px, 2.6vw, 48px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--wine);
+  margin: 0 0 22px;
+}
+
+.details-contact {
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-dark);
+  line-height: 1.7;
+  margin: 0 0 16px;
+}
+
+.details-name {
+  font-family: Italiana, serif;
+  font-size: clamp(20px, 1.65vw, 26px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-dark);
+  margin: 0 0 6px;
+}
+
+.details-phone {
+  display: block;
+  font-family: Italiana, serif;
+  font-size: clamp(18px, 1.45vw, 24px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-dark);
+  text-decoration: none;
+  margin: 0 0 28px;
+}
+
+.details-event-note {
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-dark);
+  line-height: 1.7;
+  margin: 0 0 10px;
+}
+
+.details-event-org {
+  font-family: Italiana, serif;
+  font-size: clamp(20px, 1.65vw, 26px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--wine);
+  margin: 0 0 28px;
+}
+
+.details-gift {
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-dark);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/*
+ * Details bouquet on the Details/RSVP seam: cluster center on `top: 0` of RSVP
+ * (half over cream Details, half over wine RSVP). Lives in RSVP markup for paint order.
+ */
+.sec-rsvp-band {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.details-flowers--seam {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: min(620px, 96vw);
+  height: 0;
+  overflow: visible;
+  pointer-events: none;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.details-flowers-cluster {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: auto;
+  width: 620px;
+  max-width: 96vw;
+  height: 300px;
+  transform: translate(-50%, -50%);
+}
+
+.df {
+  position: absolute;
+  user-select: none;
+  -webkit-user-drag: none;
+  display: block;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.38));
+}
+
+.df-white-left  { z-index: 1; width: 176px; left: 120px; bottom:  55px; }
+.df-white-right { z-index: 1; width: 176px; left: 280px; bottom:  52px; }
+.df-white-bud   { z-index: 2; width:  66px; left: 295px; bottom: 135px; }
+.df-ruby-bud    { z-index: 3; width:  66px; left: 400px; bottom:  22px; }
+.df-red-small   { z-index: 4; width: 110px; left:  70px; bottom:  65px; }
+.df-red-medium  { z-index: 5; width: 198px; left: 220px; bottom:  70px; }
+.df-red-large   { z-index: 6; width: 286px; left: 310px; bottom:  58px; }
+
+/* ── Confirm Attendance / RSVP ───────────────────────────────────────────── */
+
+.sec-rsvp-inner {
+  position: relative;
+  z-index: 2;
+  max-width: min(520px, 100%);
+  margin: 0 auto;
+  /* Clear the seam bouquet; keep rhythm with other bands */
+  padding: clamp(96px, 20vw, 150px) 32px 40px;
+  text-align: center;
+}
+
+.rsvp-heading {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(32px, 2.6vw, 48px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.96);
+  margin: 0 0 22px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+}
+
+.rsvp-desc {
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.7;
+  margin: 0 0 22px;
+}
+
+.rsvp-pill {
+  display: inline-block;
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.15vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--wine);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  padding: 14px 52px;
+  text-decoration: none;
+  margin: 0 0 28px;
+  transition: background 0.2s, color 0.2s;
+}
+
+button.rsvp-pill {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.rsvp-pill:hover { background: #fff; color: var(--wine-deep); }
+
+/* RSVP confirm modal (<dialog>) */
+.rsvp-dialog {
+  max-width: calc(100vw - 48px);
+  width: min(440px, 100%);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-dark);
+}
+
+.rsvp-dialog::backdrop {
+  background: rgba(12, 4, 18, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.rsvp-dialog__panel {
+  position: relative;
+  box-sizing: border-box;
+  padding: 28px 24px 22px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid rgba(102, 2, 32, 0.12);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.35);
+}
+
+.rsvp-dialog__x {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-mid);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rsvp-dialog__x:hover {
+  background: rgba(102, 2, 32, 0.08);
+  color: var(--wine);
+}
+
+.rsvp-dialog__title {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(28px, 5vw, 38px);
+  line-height: 1.15;
+  color: var(--wine);
+  margin: 0 36px 14px 0;
+  text-align: center;
+}
+
+.rsvp-dialog__text {
+  font-family: Italiana, serif;
+  font-size: clamp(14px, 1.1vw, 16px);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.65;
+  color: var(--text-dark);
+  margin: 0 0 18px;
+  text-align: center;
+}
+
+.rsvp-dialog__hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.rsvp-dialog__form {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.rsvp-dialog__field {
+  margin: 0 0 16px;
+}
+
+.rsvp-dialog__label,
+.rsvp-dialog__legend {
+  font-family: Italiana, serif;
+  font-size: clamp(13px, 1vw, 15px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-dark);
+  display: block;
+  margin-bottom: 8px;
+}
+
+.rsvp-dialog__fieldset {
+  margin: 0 0 16px;
+  padding: 12px 14px 14px;
+  border: 1px solid rgba(102, 2, 32, 0.18);
+  border-radius: 8px;
+  background: rgba(249, 245, 238, 0.65);
+}
+
+.rsvp-dialog__fieldset .rsvp-dialog__legend {
+  padding: 0 6px;
+  margin-bottom: 10px;
+}
+
+.rsvp-dialog__radios {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.rsvp-dialog__radio {
+  font-family: Italiana, serif;
+  font-size: clamp(14px, 1.05vw, 16px);
+  letter-spacing: 0.04em;
+  color: var(--text-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.rsvp-dialog__radio input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--wine);
+}
+
+.rsvp-dialog__input {
+  box-sizing: border-box;
+  width: 100%;
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.1vw, 17px);
+  letter-spacing: 0.03em;
+  padding: 11px 14px;
+  border: 1px solid rgba(102, 2, 32, 0.22);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text-dark);
+}
+
+.rsvp-dialog__input:focus {
+  outline: none;
+  border-color: var(--wine);
+  box-shadow: 0 0 0 2px rgba(102, 2, 32, 0.12);
+}
+
+.rsvp-dialog__input:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background: rgba(249, 245, 238, 0.9);
+}
+
+.rsvp-dialog__hint {
+  font-family: Italiana, serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--text-mid);
+  margin: 8px 0 0;
+  line-height: 1.45;
+}
+
+.rsvp-dialog__error {
+  font-family: Italiana, serif;
+  font-size: 13px;
+  color: #8b1538;
+  margin: 0 0 12px;
+  text-align: center;
+  line-height: 1.45;
+}
+
+.rsvp-dialog__submit {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: Italiana, serif;
+  font-size: clamp(14px, 1.05vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-align: center;
+  color: #fff;
+  background: var(--wine);
+  border: none;
+  border-radius: 999px;
+  padding: 13px 20px;
+  margin: 8px 0 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rsvp-dialog__submit:hover:not(:disabled) {
+  background: var(--wine-deep);
+}
+
+.rsvp-dialog__submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.rsvp-dialog__dismiss {
+  display: block;
+  width: 100%;
+  font-family: Italiana, serif;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  color: var(--text-mid);
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.rsvp-dialog__dismiss:hover {
+  color: var(--wine);
+}
+
+.rsvp-dialog__thanks {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.rsvp-dialog__thanks-title {
+  font-family: "Imperial Script", cursive;
+  font-size: clamp(32px, 6vw, 42px);
+  color: var(--wine);
+  margin: 0 0 12px;
+  line-height: 1.1;
+}
+
+.rsvp-closing {
+  font-family: Italiana, serif;
+  font-size: clamp(15px, 1.2vw, 18px);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.7;
+  margin: 0 0 10px;
+}
+
+.rsvp-names {
+  font-family: "Imperial Script", cursive;
+  font-size: clamp(28px, 2.3vw, 40px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0 0 28px;
+}
+
+.rsvp-photo {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+/* ── Contact ───────────────────────────────────────────────────────────── */
+
+.contact-name {
+  font-family: "Great Vibes", cursive;
+  font-size: 44px;
+  color: var(--cream);
+  margin: 0 0 10px;
+  line-height: 1.1;
+}
+
+.contact-phone {
+  display: inline-block;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: rgba(249, 245, 238, 0.75);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(249, 245, 238, 0.28);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.contact-phone:hover { color: var(--cream); border-color: rgba(249, 245, 238, 0.65); }
+
+/* ── RSVP ──────────────────────────────────────────────────────────────── */
+
+.rsvp-deadline {
+  font-family: Inter, sans-serif;
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin: 0 0 28px;
+}
+
+.rsvp-form { display: flex; flex-direction: column; gap: 14px; }
+
+.rsvp-input {
+  width: 100%;
+  border: 1px solid rgba(102, 2, 31, 0.2);
+  background: #fff;
+  padding: 13px 16px;
+  font-family: Inter, sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-dark);
+  outline: none;
+  border-radius: 0;
+  -webkit-appearance: none;
+  transition: border-color 0.2s;
+}
+
+.rsvp-input::placeholder { color: rgba(90, 64, 64, 0.45); }
+.rsvp-input:focus         { border-color: var(--wine); }
+.rsvp-textarea { resize: vertical; min-height: 84px; font-family: Inter, sans-serif; }
+
+.rsvp-fieldset { border: 1px solid rgba(102, 2, 31, 0.2); padding: 14px 16px 18px; margin: 0; background: #fff; }
+
+.rsvp-legend {
+  font-family: Inter, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(90, 64, 64, 0.55);
+  padding: 0 6px;
+}
+
+.rsvp-radio-row { display: flex; gap: 28px; justify-content: center; margin-top: 10px; }
+
+.rsvp-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-dark);
+}
+
+.rsvp-radio input[type="radio"] {
+  accent-color: var(--wine);
+  width: 15px; height: 15px;
+  cursor: pointer; flex-shrink: 0;
+}
+
+.rsvp-btn {
+  width: 100%;
+  background: var(--wine);
+  color: var(--ink);
+  border: none;
+  padding: 16px;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rsvp-btn:hover { background: var(--wine-deep); }
+
+.rsvp-thanks {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--wine);
+  margin: 24px 0 0;
+}
+
+/* ── Mobile tweaks ─────────────────────────────────────────────────────── */
+
+@media (max-width: 479px) {
+  .hero-panel     { width: 100vw; height: 100svh; min-height: 680px; }
+  .hero-copy {
+    padding-top: 8vw;
+    max-width: 94%;
+  }
+  .hero-bismillah {
+    font-size: clamp(22px, 5.5vw, 32px);
+    margin-bottom: 14px;
+    line-height: 1.55;
+  }
+  .hero-kicker {
+    font-size: clamp(34px, 8vw, 52px);
+    letter-spacing: 0.02em;
+  }
+  .hero-date {
+    font-size: clamp(18px, 4.5vw, 26px);
+    margin-top: 6px;
+  }
+  .hero-copy h1 {
+    margin-top: clamp(20px, 5vw, 36px);
+    font-size: clamp(52px, 13vw, 92px);
+  }
+  .hero-copy h1 .ampersand {
+    font-size: 0.5em;
+    margin-top: 2px;
+    margin-bottom: 0;
+  }
+
+  /* cluster = 140vw wide, centered — extends 20vw beyond each viewport edge */
+  .hero-flowers         { bottom: -20vw; height: 73vw; }
+  .hero-flowers-cluster { width: 140vw; }
+
+  /* positions in 140vw cluster; cluster left = viewport left − 20vw */
+  .f-white-left  { width: 40vw;   left:  27vw; bottom: 12.5vw; }
+  .f-white-right { width: 40vw;   left:  63vw; bottom: 11.8vw; }
+  .f-white-bud   { width: 15vw;   left:  67vw; bottom: 30.7vw; }
+  .f-ruby-bud    { width: 15vw;   left:  90vw; bottom:    5vw; }
+  .f-red-small   { width: 25vw;   left:  16vw; bottom: 14.8vw; }
+  .f-red-medium  { width: 45vw;   left:  50vw; bottom: 15.9vw; }
+  .f-red-large   { width: 65vw;   left:  70vw; bottom: 13.2vw; }
+
+  .band__inner { padding: 52px 24px; }
+  .band--welcome-countdown .band__inner {
+    padding: 32px 24px 40px;
+  }
+
+  .sec-schedule-inner,
+  .sec-quran-inner {
+    padding: 32px 24px 40px;
+  }
+
+  .sec-location-inner {
+    padding: 0 24px;
+  }
+
+  .sec-details-inner {
+    padding: 32px 24px clamp(100px, 28vw, 180px);
+  }
+
+  .sec-rsvp-inner {
+    padding: clamp(80px, 22vw, 130px) 24px 36px;
+  }
+
+  .welcome-heading { font-size: clamp(28px, 7.5vw, 38px); }
+
+  .band__inner.sec-countdown-inner {
+    padding: 0 24px;
+  }
+
+  .sec-countdown-band {
+    --countdown-mask-top: -16px;
+    --countdown-mask-bottom: -16px;
+  }
+
+  .countdown-label { font-size: clamp(22px, 5.5vw, 36px); }
+
+}

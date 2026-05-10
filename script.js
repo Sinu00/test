@@ -72,6 +72,15 @@ if (!isMobile) {
   const sealBtn  = document.getElementById("sealBtn");
   const sealRipple = document.getElementById("sealRipple");
   let opened = false;
+  let inviteMusic = null;
+
+  function startInviteMusic() {
+    if (!inviteMusic) {
+      inviteMusic = new Audio("./assets/music.mp3");
+      inviteMusic.loop = true;
+    }
+    inviteMusic.play().catch(() => {});
+  }
 
   /* Wax seal zoom+fade (~1s), then flaps open — timings must match styles.css */
   const SEAL_EXIT_MS = 1050;
@@ -80,6 +89,8 @@ if (!isMobile) {
   sealBtn.addEventListener("click", () => {
     if (opened) return;
     opened = true;
+
+    startInviteMusic();
 
     sealRipple.classList.add("is-bursting");
     sealArea.classList.add("is-tapped");

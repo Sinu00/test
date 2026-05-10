@@ -182,14 +182,13 @@ body {
 .env-scene.is-open .flap-top    { transform: translateY(-120vh); }
 .env-scene.is-open .flap-bottom { transform: translateY( 120vh); }
 
-/* ── Seal area — sits on the top flap tip (above flap stack z-index: 10) ─ */
+/* ── Seal area — centred on envelope (above flap stack z-index: 10) ─ */
 
 .seal-area {
   position: absolute;
-  /* Bottom tip of the top flap (slightly above dead-centre); nudge top/% if assets change */
-  top: 63%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -52%);
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -208,8 +207,8 @@ body {
 
 /* Invisible circular tap target; wax art scales up on tap (see .is-tapped) */
 .seal-hit {
-  width: clamp(152px, 46vw, 256px);
-  height: clamp(152px, 46vw, 256px);
+  width: clamp(168px, 52vw, 288px);
+  height: clamp(168px, 52vw, 288px);
   border-radius: 50%;
   background: transparent url("./assets/wax-seal.png") center / contain no-repeat;
   border: none;

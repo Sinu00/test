@@ -44,6 +44,7 @@
     <link rel="preload" as="image" href="./assets/leftenvelope.png" media="(max-width: 767px)" />
     <link rel="preload" as="image" href="./assets/rightenvelope.png" media="(max-width: 767px)" />
     <link rel="preload" as="image" href="./assets/wax-seal.png" media="(max-width: 767px)" />
+    <link rel="preload" as="image" href="./assets/clickicon.png" media="(max-width: 767px)" />
   </head>
   <body>
     <main class="page">
@@ -62,6 +63,17 @@
             </button>
             <p class="tap-hint">CLICK TO OPEN</p>
           </div>
+          <!-- Outside .seal-area so position:fixed is viewport-based (ancestor has transform) -->
+          <span class="ui-guide ui-guide--click-icon ui-guide--seal" aria-hidden="true">
+            <img
+              class="ui-guide__img"
+              src="./assets/clickicon.png"
+              alt=""
+              width="64"
+              height="64"
+              decoding="async"
+            />
+          </span>
         </div>
       </section>
 
@@ -191,7 +203,6 @@
             <div class="sec-location-inner">
               <h2 class="location-heading">Location</h2>
               <p class="venue-name">Pearl View</p>
-              <p class="venue-date">Saturday, 4 July 2026</p>
               <div class="venue-map-block">
                 <a
                   class="venue-map-link"
@@ -199,7 +210,19 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Open Google Maps directions to Pearl View"
-                >Location</a>
+                >
+                  <span class="ui-guide ui-guide--click-icon ui-guide--location" aria-hidden="true">
+                    <img
+                      class="ui-guide__img"
+                      src="./assets/clickicon.png"
+                      alt=""
+                      width="48"
+                      height="48"
+                      decoding="async"
+                    />
+                  </span>
+                  Location
+                </a>
                 <p class="venue-map-hint">Click to get directions</p>
               </div>
               <img class="venue-illustration" src="./assets/fountain-bg.png" alt="Pearl View — replace with a photo of your home if you like" />
@@ -235,21 +258,28 @@
             </div>
           </section>
 
-          <!-- Details -->
-          <section class="band band--cream sec-details-band" aria-label="Details">
+          <!-- Closing note (was event details + RSVP seam — restore bottom padding in CSS if RSVP returns) -->
+          <section class="band band--cream sec-details-band" aria-label="A note from the couple">
             <div class="band-edge band-edge--top" aria-hidden="true">
               <img src="./assets/Mask_group_2_1_Trace.svg" alt="" />
             </div>
             <div class="sec-details-inner">
-              <h2 class="details-heading">Details</h2>
-              <p class="details-event-note">If you need help or encounter any problem during the event,<br>please contact our event management team:</p>
-              <p class="details-event-org">Adspot Events</p>
-              <p class="details-gift">Your presence and duas are the greatest gifts.</p>
+              <p class="details-hope">We hope you will be there.</p>
+              <p class="details-signoff">Suhail <span class="details-signoff-amp">&amp;</span> Shaharba</p>
+              <img
+                class="details-couple-photo"
+                src="./assets/couple.jpg"
+                alt="Suhail and Shaharba"
+                width="800"
+                height="533"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </section>
 
-          <!-- Confirm Attendance -->
-          <section class="band band--wine sec-rsvp-band" aria-label="Confirm Attendance">
+          <!-- Confirm Attendance: temporarily off (remove hidden + next line to restore) -->
+          <section class="band band--wine sec-rsvp-band" aria-label="Confirm Attendance" hidden aria-hidden="true" data-commented-out="rsvp-band">
             <!-- Centered on Details/RSVP seam: half in cream, half in wine (needs to live in RSVP for correct paint order) -->
             <div class="details-flowers details-flowers--seam" aria-hidden="true">
               <div class="details-flowers-cluster" id="detailsFlowers">

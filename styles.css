@@ -6,6 +6,8 @@
   --ink: #f8f8f8;
   --text-dark: #1e1212;
   --text-mid: #5a4040;
+  /* Italiana is loaded at 400 + 600 from Google Fonts — use 600 for body copy */
+  --italiana-weight: 600;
 }
 
 * { box-sizing: border-box; }
@@ -66,14 +68,37 @@ body.intro-scroll-lock {
   z-index: 20;
   /* Transparent so the hero / invitation shows through flap gaps while opening */
   background: transparent;
-  /*
-   * border-radius + overflow: hidden gives the envelope rounded outer corners.
-   * As flaps slide off-screen they clip naturally at the rounded edge —
-   * this looks far more premium than a hard viewport cutoff.
-   */
-  border-radius: 28px;
+  /* Sharp corners — rounded mask was leaving corner gaps vs flap art on some widths */
+  border-radius: 0;
   overflow: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/*
+ * Mobile: `inset: 0` fixes height to the *layout* viewport, so `min-height: 100dvh`
+ * often loses — you still see a sliver of the hero at the bottom. Use top/left/right
+ * only + explicit min-height (dvh/lvh + safe-area + cushion) so the overlay truly
+ * covers the visible screen including home-indicator / subpixel gaps.
+ */
+@media (max-width: 767px) {
+  .intro-overlay {
+    inset: unset;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* Extend below the layout viewport so a sliver of invite never shows above the home bar */
+    bottom: -36px;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    box-sizing: border-box;
+  }
+
+  .env-scene {
+    position: absolute;
+    inset: 0;
+    min-height: 100%;
+  }
 }
 
 /* Before flap images are ready: solid backdrop + no partial envelope paint */
@@ -112,6 +137,7 @@ body.intro-scroll-lock {
   justify-content: center;
   margin: 0;
   font-family: Italiana, serif;
+  font-weight: var(--italiana-weight);
   font-size: clamp(15px, 4vw, 18px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -159,6 +185,9 @@ body.intro-scroll-lock {
   background-position: center top;
   /* Match side-flap scaling: scale art to container height so triangles meet consistently */
   background-size: auto 100%;
+  /* Pull top flap art up (asset / scaling left it visually low on many phones) */
+  transform: translateY(-5%);
+  transform-origin: center top;
 }
 
 /* Dedicated bottom flap art (points up toward center) */
@@ -167,6 +196,9 @@ body.intro-scroll-lock {
   background-position: center bottom;
   /* Match side-flap scaling: scale art to container height so triangles fill */
   background-size: auto 100%;
+  /* Nudge art up so the bottom paper meets the side diagonals (no dark corner wedges) */
+  transform: translateY(-2.5%);
+  transform-origin: center bottom;
 }
 
 /*
@@ -176,7 +208,8 @@ body.intro-scroll-lock {
  * pull the side art past the midline; overlap at centre reads as one fold.
  */
 .flap-bottom {
-  top: 30%;
+  /* Lower % = layer starts higher → bottom flap covers more, closes side/bottom seam */
+  top: 22%;
   bottom: 0;
   left: 0;
   right: 0;
@@ -227,6 +260,22 @@ body.intro-scroll-lock {
   background-size: auto 100%;
   transform: scale(1.08);
   transform-origin: left center;
+}
+
+@media (max-width: 767px) {
+  /* Extra paper past the bottom edge — hides invite text bleeding under the home bar */
+  .flap-bottom {
+    bottom: -48px;
+  }
+
+  .flap-left,
+  .flap-right {
+    bottom: -32px;
+  }
+
+  .seal-area {
+    top: 41%;
+  }
 }
 
 .env-scene.is-open .flap-left   { transform: translateX(-120vw); }
@@ -302,12 +351,132 @@ body.intro-scroll-lock {
   100% { transform: scale(4.5); opacity: 0;   }
 }
 
+/* ── UI guide: click hint image (assets/clickicon.png — envelope + maps) ── */
+
+.ui-guide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wine);
+  pointer-events: none;
+}
+
+.ui-guide__svg {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.ui-guide__img {
+  display: block;
+  flex-shrink: 0;
+  width: clamp(44px, 12vw, 64px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 1px rgba(255, 255, 255, 0.55));
+  animation: click-icon-soft 1.35s ease-in-out infinite;
+}
+
+.ui-guide--click-icon.ui-guide--location .ui-guide__img {
+  width: clamp(36px, 10vw, 52px);
+}
+
+@keyframes click-icon-soft {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/*
+ * Seal hand hint: fixed to viewport centre (DOM sibling after #sealArea under .env-scene — avoids
+ * .seal-area’s transform, which would otherwise make fixed behave like absolute to the seal box).
+ */
+@media (max-width: 767px) {
+  .intro-overlay:not(.env-ready) .ui-guide--click-icon.ui-guide--seal {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .ui-guide--click-icon.ui-guide--seal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 12;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    transform-origin: 50% 50%;
+    animation: click-nudge-seal 1.1s ease-in-out infinite;
+  }
+
+  .seal-area.is-tapped ~ .ui-guide--click-icon.ui-guide--seal {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+  }
+}
+
+.ui-guide--click-icon.ui-guide--seal .ui-guide__img {
+  width: clamp(40px, 11vw, 58px);
+}
+
+@keyframes click-nudge-seal {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  45% {
+    transform: translate(-50%, -50%) translateY(5px);
+  }
+  60% {
+    transform: translate(-50%, -50%) translateY(1px);
+  }
+}
+
+/* Before “Location” — point toward label, nudge on axis */
+.ui-guide--click-icon.ui-guide--location {
+  margin: 0 6px 0 0;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  animation: click-nudge-location 1.15s ease-in-out infinite;
+}
+
+@keyframes click-nudge-location {
+  0%,
+  100% {
+    transform: rotate(-90deg) translateX(0);
+  }
+  40% {
+    transform: rotate(-90deg) translateX(9px);
+  }
+  55% {
+    transform: rotate(-90deg) translateX(-2px);
+  }
+}
+
+.venue-map-link:hover .ui-guide__img {
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.45)) brightness(1.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-guide--click-icon.ui-guide--seal,
+  .ui-guide--click-icon.ui-guide--location {
+    animation: none;
+  }
+
+  .ui-guide__img {
+    animation: none;
+  }
+}
+
 /* "Tap to open" — breathes to draw the eye without screaming */
 .tap-hint {
-  margin: 16px 0 0;
+  margin: 14px 0 0;
   font-family: Italiana, serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   font-size: clamp(14px, 4vw, 18px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -391,7 +560,7 @@ body.intro-scroll-lock {
   .scroll-hint__label {
     font-family: Italiana, serif;
     font-size: clamp(12px, 3.2vw, 15px);
-    font-weight: 400;
+    font-weight: var(--italiana-weight);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--wine);
@@ -444,24 +613,22 @@ body.intro-scroll-lock {
   }
 }
 
-/* Italiana can look too thin on many mobile browsers (antialiasing). */
+/* Italiana on mobile: same weight token + smoothing (desktop now uses --italiana-weight too). */
 @media (max-width: 767px) {
   .hero-date,
   .hero-date-month,
   .tap-hint,
-  .countdown-label,
   .cd-num,
   .cd-lbl,
   .cd-sep,
   .sch-time {
-    font-weight: 600;
+    font-weight: var(--italiana-weight);
     -webkit-font-smoothing: antialiased;
     text-rendering: geometricPrecision;
   }
 
-  /* This one is intentionally lighter on desktop; make it readable on mobile. */
   .hero-date-month {
-    font-weight: 500;
+    font-weight: var(--italiana-weight);
   }
 }
 
@@ -634,7 +801,7 @@ body.intro-scroll-lock {
   flex-shrink: 0;
   margin: 6px 0 0;
   font-family: Italiana, serif;
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   font-size: 26px;
   line-height: 1.3;
   letter-spacing: 0.06em;
@@ -648,7 +815,7 @@ body.intro-scroll-lock {
 }
 
 .hero-date-month {
-  font-weight: 200;
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: capitalize;
 }
@@ -876,7 +1043,7 @@ body.intro-scroll-lock {
 .sec-welcome .welcome-body {
   font-family: Italiana, serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   font-size: clamp(16px, 1.2vw, 19px);
   line-height: 1.75;
   letter-spacing: 0.05em;
@@ -1006,7 +1173,7 @@ body.intro-scroll-lock {
 .cd-num {
   font-family: Italiana, serif;
   font-size: clamp(52px, 5.4vw, 88px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   line-height: 1;
   letter-spacing: 0.02em;
   color: var(--text-dark);
@@ -1015,7 +1182,7 @@ body.intro-scroll-lock {
 .cd-lbl {
   font-family: Italiana, serif;
   font-size: clamp(10px, 0.8vw, 13px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.12em;
   color: var(--text-mid);
   margin-top: 6px;
@@ -1024,7 +1191,7 @@ body.intro-scroll-lock {
 .cd-sep {
   font-family: Italiana, serif;
   font-size: clamp(40px, 4.2vw, 68px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   line-height: 1;
   color: var(--text-dark);
   opacity: 0.45;
@@ -1093,7 +1260,7 @@ body.intro-scroll-lock {
   display: grid;
   grid-template-columns: 1fr 18px 1fr;
   align-items: center;
-  gap: 14px;
+  gap: 35px;
   padding: 16px 0;
   position: relative;
   border: none;
@@ -1104,7 +1271,7 @@ body.intro-scroll-lock {
 .sch-time {
   font-family: Italiana, serif;
   font-size: clamp(26px, 2.2vw, 38px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   color: rgba(255, 255, 255, 0.92);
   text-align: right;
   line-height: 1;
@@ -1125,7 +1292,7 @@ body.intro-scroll-lock {
 .sch-event {
   font-family: Italiana, serif;
   font-size: clamp(13px, 1.05vw, 16px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   color: rgba(255, 255, 255, 0.78);
   text-align: left;
   letter-spacing: 0.05em;
@@ -1155,7 +1322,7 @@ body.intro-scroll-lock {
 .venue-name {
   font-family: Italiana, serif;
   font-size: clamp(22px, 2vw, 32px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
   color: var(--text-dark);
   line-height: 1.25;
@@ -1165,7 +1332,7 @@ body.intro-scroll-lock {
 .venue-date {
   font-family: Italiana, serif;
   font-size: clamp(18px, 1.55vw, 24px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   color: var(--text-dark);
   line-height: 1.35;
@@ -1177,18 +1344,25 @@ body.intro-scroll-lock {
 }
 
 .venue-map-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   font-family: Italiana, serif;
   font-size: clamp(15px, 1.15vw, 18px);
-  font-weight: 600;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.12em;
   color: var(--wine);
   background: rgba(255, 255, 255, 0.96);
   border: 1.5px solid rgba(102, 2, 32, 0.35);
   border-radius: 999px;
-  padding: 14px 52px;
+  padding: 14px 36px;
   text-decoration: none;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.venue-map-link .ui-guide {
+  color: inherit;
 }
 
 .venue-map-link:hover {
@@ -1200,7 +1374,7 @@ body.intro-scroll-lock {
 .venue-map-hint {
   font-family: Italiana, serif;
   font-size: clamp(12px, 1vw, 14px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
   color: var(--text-mid);
   margin: 12px 0 0;
@@ -1262,7 +1436,7 @@ body.intro-scroll-lock {
 .quran-en {
   font-family: Italiana, serif;
   font-size: clamp(14px, 1.15vw, 17px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   line-height: 1.75;
   color: rgba(255, 255, 255, 0.86);
@@ -1273,7 +1447,7 @@ body.intro-scroll-lock {
 .quran-ref {
   font-family: Italiana, serif;
   font-size: clamp(12px, 1vw, 14px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.08em;
   color: rgba(255, 255, 255, 0.52);
   margin: 0;
@@ -1281,6 +1455,7 @@ body.intro-scroll-lock {
 
 .quran-trans-note {
   font-family: Italiana, serif;
+  font-weight: var(--italiana-weight);
   font-size: clamp(11px, 0.95vw, 13px);
   letter-spacing: 0.04em;
   color: rgba(255, 255, 255, 0.45);
@@ -1303,8 +1478,46 @@ body.intro-scroll-lock {
 .sec-details-inner {
   max-width: min(520px, 100%);
   margin: 0 auto;
-  padding: 32px 32px clamp(120px, 26vw, 200px);
+  /* Shorter bottom pad when RSVP/seam art is off; increase if you re-enable .sec-rsvp-band */
+  padding: 32px 32px clamp(48px, 11vw, 80px);
   text-align: center;
+}
+
+.details-hope {
+  font-family: Italiana, serif;
+  font-size: clamp(16px, 1.35vw, 20px);
+  font-weight: var(--italiana-weight);
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dark);
+  line-height: 1.65;
+  margin: 0 0 18px;
+}
+
+.details-signoff {
+  font-family: "Imperial Script", cursive;
+  font-weight: 400;
+  font-size: clamp(36px, 5.2vw, 52px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  color: var(--wine);
+  margin: 0 0 28px;
+}
+
+.details-signoff-amp {
+  font-size: 0.72em;
+  margin: 0 0.06em;
+}
+
+.details-couple-photo {
+  display: block;
+  width: 100%;
+  max-width: min(400px, 88vw);
+  height: auto;
+  margin: 0 auto;
+  border-radius: 4px;
+  box-shadow: 0 16px 48px rgba(62, 18, 28, 0.12);
 }
 
 .details-heading {
@@ -1320,7 +1533,7 @@ body.intro-scroll-lock {
 .details-contact {
   font-family: Italiana, serif;
   font-size: clamp(15px, 1.2vw, 18px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   color: var(--text-dark);
   line-height: 1.7;
@@ -1330,7 +1543,7 @@ body.intro-scroll-lock {
 .details-name {
   font-family: Italiana, serif;
   font-size: clamp(20px, 1.65vw, 26px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   color: var(--text-dark);
   margin: 0 0 6px;
@@ -1340,7 +1553,7 @@ body.intro-scroll-lock {
   display: block;
   font-family: Italiana, serif;
   font-size: clamp(18px, 1.45vw, 24px);
-  font-weight: 600;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.04em;
   color: var(--text-dark);
   text-decoration: none;
@@ -1350,7 +1563,7 @@ body.intro-scroll-lock {
 .details-event-note {
   font-family: Italiana, serif;
   font-size: clamp(15px, 1.2vw, 18px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   color: var(--text-dark);
   line-height: 1.7;
@@ -1360,7 +1573,7 @@ body.intro-scroll-lock {
 .details-event-org {
   font-family: Italiana, serif;
   font-size: clamp(20px, 1.65vw, 26px);
-  font-weight: 600;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
   color: var(--wine);
   margin: 0 0 28px;
@@ -1369,7 +1582,7 @@ body.intro-scroll-lock {
 .details-gift {
   font-family: Italiana, serif;
   font-size: clamp(15px, 1.2vw, 18px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   color: var(--text-dark);
   line-height: 1.75;
@@ -1452,7 +1665,7 @@ body.intro-scroll-lock {
 .rsvp-desc {
   font-family: Italiana, serif;
   font-size: clamp(15px, 1.2vw, 18px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   color: rgba(255, 255, 255, 0.82);
   line-height: 1.7;
@@ -1463,7 +1676,7 @@ body.intro-scroll-lock {
   display: inline-block;
   font-family: Italiana, serif;
   font-size: clamp(15px, 1.15vw, 18px);
-  font-weight: 600;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.12em;
   color: var(--wine);
   background: rgba(255, 255, 255, 0.96);
@@ -1543,7 +1756,7 @@ button.rsvp-pill {
 .rsvp-dialog__text {
   font-family: Italiana, serif;
   font-size: clamp(14px, 1.1vw, 16px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.04em;
   line-height: 1.65;
   color: var(--text-dark);
@@ -1574,7 +1787,7 @@ button.rsvp-pill {
 .rsvp-dialog__legend {
   font-family: Italiana, serif;
   font-size: clamp(13px, 1vw, 15px);
-  font-weight: 600;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
   color: var(--text-dark);
   display: block;
@@ -1602,6 +1815,7 @@ button.rsvp-pill {
 
 .rsvp-dialog__radio {
   font-family: Italiana, serif;
+  font-weight: var(--italiana-weight);
   font-size: clamp(14px, 1.05vw, 16px);
   letter-spacing: 0.04em;
   color: var(--text-dark);
@@ -1621,6 +1835,7 @@ button.rsvp-pill {
   box-sizing: border-box;
   width: 100%;
   font-family: Italiana, serif;
+  font-weight: var(--italiana-weight);
   font-size: clamp(15px, 1.1vw, 17px);
   letter-spacing: 0.03em;
   padding: 11px 14px;
@@ -1644,6 +1859,7 @@ button.rsvp-pill {
 
 .rsvp-dialog__hint {
   font-family: Italiana, serif;
+  font-weight: var(--italiana-weight);
   font-size: 12px;
   letter-spacing: 0.04em;
   color: var(--text-mid);
@@ -1653,6 +1869,7 @@ button.rsvp-pill {
 
 .rsvp-dialog__error {
   font-family: Italiana, serif;
+  font-weight: var(--italiana-weight);
   font-size: 13px;
   color: #8b1538;
   margin: 0 0 12px;
@@ -1666,7 +1883,7 @@ button.rsvp-pill {
   box-sizing: border-box;
   font-family: Italiana, serif;
   font-size: clamp(14px, 1.05vw, 16px);
-  font-weight: 600;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.1em;
   text-align: center;
   color: #fff;
@@ -1692,6 +1909,7 @@ button.rsvp-pill {
   display: block;
   width: 100%;
   font-family: Italiana, serif;
+  font-weight: var(--italiana-weight);
   font-size: 14px;
   letter-spacing: 0.06em;
   color: var(--text-mid);
@@ -1723,7 +1941,7 @@ button.rsvp-pill {
 .rsvp-closing {
   font-family: Italiana, serif;
   font-size: clamp(15px, 1.2vw, 18px);
-  font-weight: 400;
+  font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
   color: rgba(255, 255, 255, 0.88);
   line-height: 1.7;
@@ -1920,7 +2138,7 @@ button.rsvp-pill {
   }
 
   .sec-details-inner {
-    padding: 32px 24px clamp(100px, 28vw, 180px);
+    padding: 32px 24px clamp(40px, 12vw, 72px);
   }
 
   .sec-rsvp-inner {

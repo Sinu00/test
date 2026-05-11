@@ -420,6 +420,8 @@ body.intro-scroll-lock {
 
 .ui-guide--click-icon.ui-guide--seal .ui-guide__img {
   width: clamp(40px, 11vw, 58px);
+  /* Black asset → white on cream envelope */
+  filter: brightness(0) invert(1) drop-shadow(0 1px 3px rgba(0, 0, 0, 0.22));
 }
 
 @keyframes click-nudge-seal {

@@ -157,14 +157,16 @@ body.intro-scroll-lock {
 .flap-top::before {
   background-image: url("./assets/top_envelope_flap_true_transparent.png");
   background-position: center top;
-  background-size: 100% auto;
+  /* Match side-flap scaling: scale art to container height so triangles meet consistently */
+  background-size: auto 100%;
 }
 
 /* Dedicated bottom flap art (points up toward center) */
 .flap-bottom::before {
   background-image: url("./assets/bottomenvelope.png");
   background-position: center bottom;
-  background-size: 100% auto;
+  /* Match side-flap scaling: scale art to container height so triangles fill */
+  background-size: auto 100%;
 }
 
 /*
@@ -439,6 +441,27 @@ body.intro-scroll-lock {
       transition-duration: 0.01ms;
       transition-delay: 0s !important;
     }
+  }
+}
+
+/* Italiana can look too thin on many mobile browsers (antialiasing). */
+@media (max-width: 767px) {
+  .hero-date,
+  .hero-date-month,
+  .tap-hint,
+  .countdown-label,
+  .cd-num,
+  .cd-lbl,
+  .cd-sep,
+  .sch-time {
+    font-weight: 600;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  /* This one is intentionally lighter on desktop; make it readable on mobile. */
+  .hero-date-month {
+    font-weight: 500;
   }
 }
 

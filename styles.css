@@ -539,18 +539,13 @@ body.intro-scroll-lock {
 @media (max-width: 767px) {
   .scroll-hint {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
     position: fixed;
-    bottom: max(24px, env(safe-area-inset-bottom, 0px));
+    bottom: max(22px, env(safe-area-inset-bottom, 0px));
     left: 50%;
     transform: translateX(-50%);
     z-index: 25;
-    padding: 10px 18px 14px;
-    border-radius: 999px;
-    background: rgba(249, 245, 238, 0.94);
-    box-shadow: 0 8px 28px rgba(22, 8, 18, 0.16);
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -559,30 +554,18 @@ body.intro-scroll-lock {
       visibility 0s linear 0.55s;
   }
 
-  .scroll-hint__label {
-    font-family: Italiana, serif;
-    font-size: clamp(12px, 3.2vw, 15px);
-    font-weight: var(--italiana-weight);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--wine);
-    white-space: nowrap;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-  }
-
   .scroll-hint__chev {
-    width: 9px;
-    height: 9px;
-    margin-top: -2px;
-    border-right: 2px solid var(--wine);
-    border-bottom: 2px solid var(--wine);
-    opacity: 0.88;
-    animation: scroll-hint-bob 1.35s ease-in-out infinite;
+    width: 16px;
+    height: 16px;
+    border-right: 2.5px solid #fff;
+    border-bottom: 2.5px solid #fff;
+    filter: drop-shadow(0 1px 3px rgba(22, 8, 18, 0.55));
+    animation: scroll-hint-bob 1.4s ease-in-out infinite;
   }
 
   @keyframes scroll-hint-bob {
     0%, 100% { transform: translateY(0) rotate(45deg); }
-    50%      { transform: translateY(6px) rotate(45deg); }
+    50%      { transform: translateY(8px) rotate(45deg); }
   }
 
   .invitation-content.content-visible:not(.scroll-hint-done) .scroll-hint {
@@ -716,8 +699,22 @@ body.intro-scroll-lock {
   min-height: 680px;
   background: #0c0714;
   position: relative;
+  z-index: 2; /* lift hero (and its overflowing bottom edge) above the next band */
   text-align: center;
   overflow: visible;
+}
+
+/* Decorative ornament straddling the seam between the hero and the next band */
+.hero-bottom-edge {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform: translateY(50%); /* center the ornament on the hero/section boundary */
+  width: 100%;
+  height: auto;
+  z-index: 3;
+  pointer-events: none;
+  display: block;
 }
 
 .hero-video {
@@ -735,26 +732,6 @@ body.intro-scroll-lock {
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  /* Base scrim + vignette + bottom falloff — keeps copy readable on bright video */
-  background:
-    radial-gradient(
-      ellipse 95% 70% at 50% 38%,
-      rgba(0, 0, 0, 0.08) 0%,
-      rgba(0, 0, 0, 0.28) 100%
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.18) 0%,
-      rgba(0, 0, 0, 0.06) 42%,
-      rgba(0, 0, 0, 0.12) 100%
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(6, 2, 16, 0.55) 0%,
-      rgba(12, 6, 28, 0.26) 30%,
-      rgba(12, 6, 28, 0.26) 62%,
-      rgba(4, 1, 10, 0.82) 100%
-    );
 }
 
 .hero-copy {
@@ -846,7 +823,7 @@ body.intro-scroll-lock {
   font-weight: 400;
 }
 
-.hero-flowers {
+/* .hero-flowers {
   position: absolute;
   left: 0;
   right: 0;
@@ -855,14 +832,14 @@ body.intro-scroll-lock {
   pointer-events: none;
   z-index: 3;
   overflow: visible;
-}
+} */
 
 /*
  * Cluster is 620px wide, centered on the card.
  * On a 440px card this spills 90px left + right into the wine gutters.
  * Rotations on f-red-small / f-red-large are set via gsap.set() in script.js.
  */
-.hero-flowers-cluster {
+/* .hero-flowers-cluster {
   position: absolute;
   left: 50%;
   bottom: 0;
@@ -877,20 +854,20 @@ body.intro-scroll-lock {
   -webkit-user-drag: none;
   display: block;
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.38));
-}
+} */
 
 /* ── Bouquet z-stack: back (whites) → mid (buds) → front (reds) ─────────── */
 /* Positions are in the 620px cluster. Card left = cluster left + 90px.       */
 /* container bottom = 90px below hero edge;                                   */
 /* flower bottom B → bottom-edge at (90−B)px below hero edge.                */
 
-.f-white-left  { z-index: 1; width: 176px; left: 120px; bottom:  55px; }
+/* .f-white-left  { z-index: 1; width: 176px; left: 120px; bottom:  55px; }
 .f-white-right { z-index: 1; width: 176px; left: 280px; bottom:  52px; }
 .f-white-bud   { z-index: 2; width:  66px; left: 295px; bottom: 135px; }
 .f-ruby-bud    { z-index: 3; width:  66px; left: 400px; bottom:  22px; }
 .f-red-small   { z-index: 4; width: 110px; left:  70px; bottom:  65px; }
 .f-red-medium  { z-index: 5; width: 198px; left: 220px; bottom:  70px; }
-.f-red-large   { z-index: 6; width: 286px; left: 310px; bottom:  58px; }
+.f-red-large   { z-index: 6; width: 286px; left: 310px; bottom:  58px; } */
 
 /* ── Shared section styles (bands carry background; inner column uses band__inner) ── */
 
@@ -2127,7 +2104,7 @@ button.rsvp-pill {
 
   .band__inner { padding: 52px 24px; }
   .band--welcome-countdown .band__inner {
-    padding: 32px 24px 40px;
+    padding: 110px 24px 40px;
   }
 
   .sec-schedule-inner,

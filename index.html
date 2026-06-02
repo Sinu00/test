@@ -13,7 +13,7 @@
     <meta property="og:title" content="Suhail &amp; Shaharba — Wedding invitation · 4 July 2026" />
     <meta
       property="og:description"
-      content="You're invited to celebrate with us on Saturday 4 July 2026. Tap through for venue details, schedule, dress code, and RSVP."
+      content="You're invited to celebrate with us on Saturday 4 July 2026. Tap through for more details."
     />
     <meta property="og:image" content="https://sinu00.github.io/test/assets/metaimage.png" />
     <meta property="og:image:type" content="image/png" />
@@ -35,6 +35,10 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Great+Vibes&family=Imperial+Script&family=Inter:wght@300;400;500&family=Italiana:wght@400;600&family=Lateef:wght@400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
       rel="stylesheet"
     />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ephesis&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css" />
     <!-- Preload hero video for instant playback -->
     <link rel="preload" as="video" href="./assets/herobackground%20video.MP4" />
@@ -79,8 +83,7 @@
 
       <!-- Main invitation content -->
       <section id="invitationContent" class="invitation-content" aria-hidden="true">
-        <div class="scroll-hint" id="scrollHint" role="status" aria-live="polite">
-          <span class="scroll-hint__label">Scroll to explore</span>
+        <div class="scroll-hint" id="scrollHint" role="status" aria-live="polite" aria-label="Scroll for more">
           <span class="scroll-hint__chev" aria-hidden="true"></span>
         </div>
         <div class="invitation-stack">
@@ -103,17 +106,7 @@
                 Shaharba
               </h1>
             </div>
-            <div class="hero-flowers" aria-hidden="true">
-              <div class="hero-flowers-cluster">
-                <!-- DOM: back → front; CSS z-index controls final stacking -->
-                <img class="flower f-white-left"  src="./assets/flower-white-large.webp" alt="" />
-                <img class="flower f-white-right" src="./assets/flower-white-large.webp" alt="" />
-                <img class="flower f-white-bud"   src="./assets/flower-white-bud.webp"   alt="" />
-                <img class="flower f-red-small"   src="./assets/flower-red-small.png"     alt="" />
-                <img class="flower f-red-medium"  src="./assets/flower-red-medium.webp"   alt="" />
-                <img class="flower f-red-large"   src="./assets/flower-red-large.webp"    alt="" />
-              </div>
-            </div>
+            <img class="hero-bottom-edge" src="./assets/nobgherobottom.png" alt="" aria-hidden="true" />
           </div>
 
           <!-- Welcome + countdown -->

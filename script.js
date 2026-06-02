@@ -103,6 +103,61 @@ function unlockIntroScroll() {
 }
 
 let scrollHintInited = false;
+let autoScrolling = false;     /* true while the peek tween drives the scroll */
+let userInterrupted = false;   /* set the moment the visitor takes over */
+let pendingWaitId = null;      /* id of the currently-pending wait() timeout */
+
+/* Cancelable delay — resolves after ms, or early if the user interrupts. */
+function hintWait(ms) {
+  return new Promise((resolve) => {
+    pendingWaitId = window.setTimeout(() => {
+      pendingWaitId = null;
+      resolve();
+    }, ms);
+  });
+}
+
+/* Soft rAF tween of window scroll to targetY. Resolves when done (or interrupted). */
+function smoothScrollTo(targetY, duration) {
+  return new Promise((resolve) => {
+    if (userInterrupted) { resolve(); return; }
+    const startY = window.scrollY || window.pageYOffset || 0;
+    const dist = targetY - startY;
+    const startT = performance.now();
+    autoScrolling = true;
+
+    function frame(now) {
+      if (userInterrupted) { autoScrolling = false; resolve(); return; }
+      const t = Math.min(1, (now - startT) / duration);
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; /* easeInOutQuad */
+      window.scrollTo(0, startY + dist * eased);
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else {
+        autoScrolling = false;
+        resolve();
+      }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+/* Gentle "peek" down to reveal the next section, glide back, repeat a few times. */
+async function playPeekHint() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const peekY = Math.round(window.innerHeight * 0.25);
+  const ROUNDS = 3;
+  const GLIDE = 420; /* ms per up/down glide */
+  const HOLD = 220;  /* ms pause at each end */
+
+  await hintWait(5000); if (userInterrupted) return;
+  for (let i = 0; i < ROUNDS; i++) {
+    await smoothScrollTo(peekY, GLIDE); if (userInterrupted) return;
+    await hintWait(HOLD);               if (userInterrupted) return;
+    await smoothScrollTo(0, GLIDE);     if (userInterrupted) return;
+    if (i < ROUNDS - 1) { await hintWait(HOLD); if (userInterrupted) return; }
+  }
+}
 
 function initScrollHintAfterReveal() {
   if (scrollHintInited || window.innerWidth >= 768) return;
@@ -115,14 +170,29 @@ function initScrollHintAfterReveal() {
   };
 
   function onScroll() {
-    if (window.scrollY > 40) dismiss();
+    /* Ignore our own programmatic peek; only react to genuine user scrolling. */
+    if (!autoScrolling && window.scrollY > 40) dismiss();
   }
+
+  /* Any real interaction cancels the peek and hands control back to the visitor. */
+  function onUserInteract() {
+    userInterrupted = true;
+    if (pendingWaitId !== null) {
+      clearTimeout(pendingWaitId);
+      pendingWaitId = null;
+    }
+    dismiss();
+  }
+  ["touchstart", "wheel", "pointerdown", "keydown"].forEach((ev) =>
+    window.addEventListener(ev, onUserInteract, { passive: true, once: true })
+  );
 
   const autoFadeId = setTimeout(dismiss, 9000);
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       window.addEventListener("scroll", onScroll, { passive: true });
+      playPeekHint();
     });
   });
 }

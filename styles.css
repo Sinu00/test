@@ -10,10 +10,19 @@
   --italiana-weight: 400;
 }
 
-/* Hero couple names — bespoke display face */
+/* Headings display face */
 @font-face {
   font-family: "Amoresa";
   src: url("./assets/amoresa Font/Andrey Sharonov - Amoresa Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Hero couple names — bespoke display face */
+@font-face {
+  font-family: "Amsterdam";
+  src: url("./assets/amsterdam_4/Amsterdam.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -839,22 +848,23 @@ body.intro-scroll-lock {
   justify-content: center;
   margin: 0;
   min-height: 0;
-  font-family: "Amoresa", "Ballet", cursive;
+  font-family: "Amsterdam", "Amoresa", cursive;
   font-weight: 400;
-  font-size: 96px;
-  line-height: 0.92;
+  font-size: 72px;
+  line-height: 2;
   color: #fff;
   text-shadow: 0 4px 28px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.hero-copy h1 .ampersand {
+/* .hero-copy h1 .ampersand {
+  font-family: "Imperial Script", sans-serif;
   display: block;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-size: 0.52em;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  font-size: 0.7em;
   line-height: 1;
   font-weight: 400;
-}
+} */
 
 /* .hero-flowers {
   position: absolute;
@@ -1579,14 +1589,18 @@ body.intro-scroll-lock {
   margin: 0 0 28px;
 }
 
-/* Numbers everywhere render in Black Mango (date figures, countdown, times, dates, phone) */
+/* Numbers render in Black Mango (date figures, times, dates, phone) … */
 .hero-date-fig,
-.cd-num,
-.cd-sep,
 .sch-time,
 .venue-date,
 .details-phone {
   font-family: "Black Mango", sans-serif;
+}
+
+/* … except the countdown time, which uses Italiana */
+.cd-num,
+.cd-sep {
+  font-family: "Italiana", serif;
 }
 
 .details-event-note {
@@ -2131,12 +2145,13 @@ button.rsvp-pill {
     margin-top: 6px;
   }
   .hero-copy h1 {
-    font-size: clamp(60px, 16vw, 112px);
+    font-size: clamp(44px, 12vw, 78px);
   }
   .hero-copy h1 .ampersand {
-    font-size: 0.5em;
-    margin-top: 2px;
-    margin-bottom: 0;
+    font-family: "Amoresa", cursive;
+    font-size: 0.7em;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
 
   /* cluster = 140vw wide, centered — extends 20vw beyond each viewport edge */

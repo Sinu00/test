@@ -148,9 +148,8 @@ async function playPeekHint() {
   const peekY = Math.round(window.innerHeight * 0.25);
   const ROUNDS = 3;
   const GLIDE = 420; /* ms per up/down glide */
-  const HOLD = 220;  /* ms pause at each end */
+  const HOLD = 120;  /* ms pause at each end */
 
-  await hintWait(1000); if (userInterrupted) return;
   for (let i = 0; i < ROUNDS; i++) {
     await smoothScrollTo(peekY, GLIDE); if (userInterrupted) return;
     await hintWait(HOLD);               if (userInterrupted) return;
@@ -190,10 +189,8 @@ function initScrollHintAfterReveal() {
   const autoFadeId = setTimeout(dismiss, 9000);
 
   requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      window.addEventListener("scroll", onScroll, { passive: true });
-      playPeekHint();
-    });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    playPeekHint();
   });
 }
 

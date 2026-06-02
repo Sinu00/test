@@ -150,7 +150,7 @@ async function playPeekHint() {
   const GLIDE = 420; /* ms per up/down glide */
   const HOLD = 220;  /* ms pause at each end */
 
-  await hintWait(5000); if (userInterrupted) return;
+  await hintWait(1000); if (userInterrupted) return;
   for (let i = 0; i < ROUNDS; i++) {
     await smoothScrollTo(peekY, GLIDE); if (userInterrupted) return;
     await hintWait(HOLD);               if (userInterrupted) return;

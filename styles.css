@@ -6,8 +6,26 @@
   --ink: #f8f8f8;
   --text-dark: #1e1212;
   --text-mid: #5a4040;
-  /* Italiana is loaded at 400 + 600 from Google Fonts — use 600 for body copy */
-  --italiana-weight: 600;
+  /* Momo Trust Display ships a single weight (400); token kept so existing rules resolve */
+  --italiana-weight: 400;
+}
+
+/* Hero couple names — bespoke display face */
+@font-face {
+  font-family: "Amoresa";
+  src: url("./assets/amoresa Font/Andrey Sharonov - Amoresa Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Body / paragraph text */
+@font-face {
+  font-family: "Black Mango";
+  src: url("./assets/Black Mango Regular/Black Mango Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 * { box-sizing: border-box; }
@@ -136,7 +154,7 @@ body.intro-scroll-lock {
   align-items: center;
   justify-content: center;
   margin: 0;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-weight: var(--italiana-weight);
   font-size: clamp(15px, 4vw, 18px);
   letter-spacing: 0.14em;
@@ -476,10 +494,10 @@ body.intro-scroll-lock {
 /* "Tap to open" — breathes to draw the eye without screaming */
 .tap-hint {
   margin: 14px 0 0;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-style: normal;
-  font-weight: var(--italiana-weight);
-  font-size: clamp(14px, 4vw, 18px);
+  font-weight: 700;
+  font-size: clamp(16px, 5vw, 22px);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--wine);
@@ -539,8 +557,10 @@ body.intro-scroll-lock {
 @media (max-width: 767px) {
   .scroll-hint {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 6px;
     position: fixed;
     bottom: max(22px, env(safe-area-inset-bottom, 0px));
     left: 50%;
@@ -552,6 +572,16 @@ body.intro-scroll-lock {
     transition:
       opacity 0.5s ease,
       visibility 0s linear 0.55s;
+  }
+
+  .scroll-hint__label {
+    font-family: "Black Mango", sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(22, 8, 18, 0.55);
   }
 
   .scroll-hint__chev {
@@ -612,8 +642,10 @@ body.intro-scroll-lock {
     text-rendering: geometricPrecision;
   }
 
-  .hero-date-month {
-    font-weight: var(--italiana-weight);
+  .hero-date,
+  .hero-date-month,
+  .tap-hint {
+    font-weight: 700;
   }
 }
 
@@ -704,12 +736,13 @@ body.intro-scroll-lock {
   overflow: visible;
 }
 
-/* Decorative ornament straddling the seam between the hero and the next band */
+/* Jagged wine edge (same SVG the other sections use) centered on the seam
+   between the hero and the wine band — half over the video, half over the band. */
 .hero-bottom-edge {
   position: absolute;
   left: 0;
   bottom: 0;
-  transform: translateY(50%); /* center the ornament on the hero/section boundary */
+  transform: translateY(50%) scaleY(-1); /* center on the seam + flip the torn edge upside down */
   width: 100%;
   height: auto;
   z-index: 3;
@@ -765,7 +798,7 @@ body.intro-scroll-lock {
 .hero-kicker {
   flex-shrink: 0;
   margin: 0;
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: 30px;
   line-height: 1.1;
@@ -779,8 +812,8 @@ body.intro-scroll-lock {
 .hero-date {
   flex-shrink: 0;
   margin: 6px 0 0;
-  font-family: Italiana, serif;
-  font-weight: var(--italiana-weight);
+  font-family: "Black Mango", sans-serif;
+  font-weight: 700;
   font-size: 26px;
   line-height: 1.3;
   letter-spacing: 0.06em;
@@ -794,7 +827,7 @@ body.intro-scroll-lock {
 }
 
 .hero-date-month {
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: capitalize;
 }
@@ -806,18 +839,18 @@ body.intro-scroll-lock {
   justify-content: center;
   margin: 0;
   min-height: 0;
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", "Ballet", cursive;
   font-weight: 400;
   font-size: 96px;
-  line-height: 0.6;
+  line-height: 0.92;
   color: #fff;
   text-shadow: 0 4px 28px rgba(0, 0, 0, 0.45), 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .hero-copy h1 .ampersand {
   display: block;
-  margin-top: 2px;
-  margin-bottom: 0;
+  margin-top: 10px;
+  margin-bottom: 10px;
   font-size: 0.52em;
   line-height: 1;
   font-weight: 400;
@@ -896,7 +929,7 @@ body.intro-scroll-lock {
 .band--wine .orn-diamond  { background: rgba(249, 245, 238, 0.55); }
 
 .sec-title {
-  font-family: "Great Vibes", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(28px, 6vw, 36px);
   letter-spacing: 0.04em;
@@ -1008,7 +1041,7 @@ body.intro-scroll-lock {
 }
 
 .welcome-heading {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(32px, 2.6vw, 48px);
   line-height: 1.15;
@@ -1020,7 +1053,7 @@ body.intro-scroll-lock {
 }
 
 .sec-welcome .welcome-body {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-style: normal;
   font-weight: var(--italiana-weight);
   font-size: clamp(16px, 1.2vw, 19px);
@@ -1115,7 +1148,7 @@ body.intro-scroll-lock {
 }
 
 .countdown-label {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(28px, 2.4vw, 42px);
   line-height: 1.15;
@@ -1150,7 +1183,7 @@ body.intro-scroll-lock {
 }
 
 .cd-num {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(52px, 5.4vw, 88px);
   font-weight: var(--italiana-weight);
   line-height: 1;
@@ -1159,7 +1192,7 @@ body.intro-scroll-lock {
 }
 
 .cd-lbl {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(10px, 0.8vw, 13px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.12em;
@@ -1168,7 +1201,7 @@ body.intro-scroll-lock {
 }
 
 .cd-sep {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(40px, 4.2vw, 68px);
   font-weight: var(--italiana-weight);
   line-height: 1;
@@ -1189,7 +1222,7 @@ body.intro-scroll-lock {
 }
 
 .sch-heading {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(32px, 2.6vw, 48px);
   line-height: 1.15;
@@ -1248,7 +1281,7 @@ body.intro-scroll-lock {
 .schedule-item:first-child { border-top: none; }
 
 .sch-time {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(26px, 2.2vw, 38px);
   font-weight: var(--italiana-weight);
   color: rgba(255, 255, 255, 0.92);
@@ -1269,7 +1302,7 @@ body.intro-scroll-lock {
 }
 
 .sch-event {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(13px, 1.05vw, 16px);
   font-weight: var(--italiana-weight);
   color: rgba(255, 255, 255, 0.78);
@@ -1289,7 +1322,7 @@ body.intro-scroll-lock {
 }
 
 .location-heading {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(32px, 2.6vw, 48px);
   line-height: 1.15;
@@ -1299,7 +1332,7 @@ body.intro-scroll-lock {
 }
 
 .venue-name {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(22px, 2vw, 32px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
@@ -1309,7 +1342,7 @@ body.intro-scroll-lock {
 }
 
 .venue-date {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(18px, 1.55vw, 24px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
@@ -1327,7 +1360,7 @@ body.intro-scroll-lock {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(15px, 1.15vw, 18px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.12em;
@@ -1351,7 +1384,7 @@ body.intro-scroll-lock {
 }
 
 .venue-map-hint {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(12px, 1vw, 14px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
@@ -1379,7 +1412,7 @@ body.intro-scroll-lock {
 }
 
 .quran-heading {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(32px, 2.6vw, 48px);
   line-height: 1.15;
@@ -1390,14 +1423,14 @@ body.intro-scroll-lock {
 }
 
 .quran-verse {
-  margin: 0 0 32px;
+  margin: 0;
   padding: 0;
   border: none;
   quotes: none;
 }
 
 .quran-verse:last-of-type {
-  margin-bottom: 24px;
+  margin-bottom: 0;
 }
 
 .quran-ar {
@@ -1413,18 +1446,25 @@ body.intro-scroll-lock {
 }
 
 .quran-en {
-  font-family: Italiana, serif;
-  font-size: clamp(14px, 1.15vw, 17px);
-  font-weight: var(--italiana-weight);
-  letter-spacing: 0.05em;
-  line-height: 1.75;
-  color: rgba(255, 255, 255, 0.86);
-  margin: 0 0 12px;
+  font-family: "Amoresa", cursive;
+  font-size: clamp(26px, 6.5vw, 42px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
   text-align: center;
 }
 
+.quran-en .qmark {
+  font-size: 1.7em;
+  line-height: 0;
+  vertical-align: -0.28em;
+  color: rgba(255, 255, 255, 0.65);
+}
+
 .quran-ref {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(12px, 1vw, 14px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.08em;
@@ -1433,7 +1473,7 @@ body.intro-scroll-lock {
 }
 
 .quran-trans-note {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-weight: var(--italiana-weight);
   font-size: clamp(11px, 0.95vw, 13px);
   letter-spacing: 0.04em;
@@ -1463,7 +1503,7 @@ body.intro-scroll-lock {
 }
 
 .details-hope {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(16px, 1.35vw, 20px);
   font-weight: var(--italiana-weight);
   font-style: normal;
@@ -1475,7 +1515,7 @@ body.intro-scroll-lock {
 }
 
 .details-signoff {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(36px, 5.2vw, 52px);
   line-height: 1.15;
@@ -1500,7 +1540,7 @@ body.intro-scroll-lock {
 }
 
 .details-heading {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(32px, 2.6vw, 48px);
   line-height: 1.15;
@@ -1510,7 +1550,7 @@ body.intro-scroll-lock {
 }
 
 .details-contact {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(15px, 1.2vw, 18px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
@@ -1520,7 +1560,7 @@ body.intro-scroll-lock {
 }
 
 .details-name {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(20px, 1.65vw, 26px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
@@ -1530,7 +1570,7 @@ body.intro-scroll-lock {
 
 .details-phone {
   display: block;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(18px, 1.45vw, 24px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.04em;
@@ -1539,8 +1579,18 @@ body.intro-scroll-lock {
   margin: 0 0 28px;
 }
 
+/* Numbers everywhere render in Black Mango (date figures, countdown, times, dates, phone) */
+.hero-date-fig,
+.cd-num,
+.cd-sep,
+.sch-time,
+.venue-date,
+.details-phone {
+  font-family: "Black Mango", sans-serif;
+}
+
 .details-event-note {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(15px, 1.2vw, 18px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
@@ -1550,7 +1600,7 @@ body.intro-scroll-lock {
 }
 
 .details-event-org {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(20px, 1.65vw, 26px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
@@ -1559,7 +1609,7 @@ body.intro-scroll-lock {
 }
 
 .details-gift {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(15px, 1.2vw, 18px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
@@ -1631,7 +1681,7 @@ body.intro-scroll-lock {
 }
 
 .rsvp-heading {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(32px, 2.6vw, 48px);
   line-height: 1.15;
@@ -1642,7 +1692,7 @@ body.intro-scroll-lock {
 }
 
 .rsvp-desc {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(15px, 1.2vw, 18px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
@@ -1653,7 +1703,7 @@ body.intro-scroll-lock {
 
 .rsvp-pill {
   display: inline-block;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(15px, 1.15vw, 18px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.12em;
@@ -1723,7 +1773,7 @@ button.rsvp-pill {
 }
 
 .rsvp-dialog__title {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-weight: 400;
   font-size: clamp(28px, 5vw, 38px);
   line-height: 1.15;
@@ -1733,7 +1783,7 @@ button.rsvp-pill {
 }
 
 .rsvp-dialog__text {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(14px, 1.1vw, 16px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.04em;
@@ -1764,7 +1814,7 @@ button.rsvp-pill {
 
 .rsvp-dialog__label,
 .rsvp-dialog__legend {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(13px, 1vw, 15px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.06em;
@@ -1793,7 +1843,7 @@ button.rsvp-pill {
 }
 
 .rsvp-dialog__radio {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-weight: var(--italiana-weight);
   font-size: clamp(14px, 1.05vw, 16px);
   letter-spacing: 0.04em;
@@ -1813,7 +1863,7 @@ button.rsvp-pill {
 .rsvp-dialog__input {
   box-sizing: border-box;
   width: 100%;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-weight: var(--italiana-weight);
   font-size: clamp(15px, 1.1vw, 17px);
   letter-spacing: 0.03em;
@@ -1837,7 +1887,7 @@ button.rsvp-pill {
 }
 
 .rsvp-dialog__hint {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-weight: var(--italiana-weight);
   font-size: 12px;
   letter-spacing: 0.04em;
@@ -1847,7 +1897,7 @@ button.rsvp-pill {
 }
 
 .rsvp-dialog__error {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-weight: var(--italiana-weight);
   font-size: 13px;
   color: #8b1538;
@@ -1860,7 +1910,7 @@ button.rsvp-pill {
   display: block;
   width: 100%;
   box-sizing: border-box;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(14px, 1.05vw, 16px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.1em;
@@ -1887,7 +1937,7 @@ button.rsvp-pill {
 .rsvp-dialog__dismiss {
   display: block;
   width: 100%;
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-weight: var(--italiana-weight);
   font-size: 14px;
   letter-spacing: 0.06em;
@@ -1910,7 +1960,7 @@ button.rsvp-pill {
 }
 
 .rsvp-dialog__thanks-title {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-size: clamp(32px, 6vw, 42px);
   color: var(--wine);
   margin: 0 0 12px;
@@ -1918,7 +1968,7 @@ button.rsvp-pill {
 }
 
 .rsvp-closing {
-  font-family: Italiana, serif;
+  font-family: "Black Mango", sans-serif;
   font-size: clamp(15px, 1.2vw, 18px);
   font-weight: var(--italiana-weight);
   letter-spacing: 0.05em;
@@ -1928,7 +1978,7 @@ button.rsvp-pill {
 }
 
 .rsvp-names {
-  font-family: "Imperial Script", cursive;
+  font-family: "Amoresa", cursive;
   font-size: clamp(28px, 2.3vw, 40px);
   font-weight: 400;
   letter-spacing: 0.02em;
@@ -1947,7 +1997,7 @@ button.rsvp-pill {
 /* ── Contact ───────────────────────────────────────────────────────────── */
 
 .contact-name {
-  font-family: "Great Vibes", cursive;
+  font-family: "Amoresa", cursive;
   font-size: 44px;
   color: var(--cream);
   margin: 0 0 10px;
@@ -2038,7 +2088,7 @@ button.rsvp-pill {
   color: var(--ink);
   border: none;
   padding: 16px;
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Black Mango", sans-serif;
   font-size: 19px;
   font-weight: 600;
   letter-spacing: 0.18em;
@@ -2050,7 +2100,7 @@ button.rsvp-pill {
 .rsvp-btn:hover { background: var(--wine-deep); }
 
 .rsvp-thanks {
-  font-family: "Cormorant Garamond", serif;
+  font-family: "Black Mango", sans-serif;
   font-style: italic;
   font-size: 20px;
   line-height: 1.6;
@@ -2104,7 +2154,7 @@ button.rsvp-pill {
 
   .band__inner { padding: 52px 24px; }
   .band--welcome-countdown .band__inner {
-    padding: 110px 24px 40px;
+    padding: 64px 24px 40px;
   }
 
   .sec-schedule-inner,
@@ -2137,4 +2187,15 @@ button.rsvp-pill {
 
   .countdown-label { font-size: clamp(22px, 5.5vw, 36px); }
 
+}
+
+/* Monogram logo (red) in the closing details section — replaces the couple photo */
+.details-logo {
+  display: block;
+  width: clamp(160px, 52vw, 280px);
+  aspect-ratio: 1354 / 1162;
+  margin: 8px auto 0;
+  background-color: #8a0f24;
+  -webkit-mask: url("./assets/sululogonobg.png") center / contain no-repeat;
+          mask: url("./assets/sululogonobg.png") center / contain no-repeat;
 }

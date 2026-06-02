@@ -32,16 +32,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Great+Vibes&family=Imperial+Script&family=Inter:wght@300;400;500&family=Italiana:wght@400;600&family=Lateef:wght@400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Great+Vibes&family=Imperial+Script&family=Inter:wght@300;400;500&family=Italiana&family=Lateef:wght@400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap"
       rel="stylesheet"
     />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ephesis&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ballet&family=Ephesis&family=Momo+Trust+Display&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css" />
     <!-- Preload hero video for instant playback -->
-    <link rel="preload" as="video" href="./assets/herobackground%20video.MP4" />
+    <link rel="preload" as="video" href="./assets/herobackground%20video.mp4" />
     <!-- Mobile envelope only — fetch early so images aren’t staggered on first paint -->
     <link rel="preload" as="image" href="./assets/top_envelope_flap_true_transparent.png" media="(max-width: 767px)" />
     <link rel="preload" as="image" href="./assets/bottomenvelope.png" media="(max-width: 767px)" />
@@ -84,6 +84,7 @@
       <!-- Main invitation content -->
       <section id="invitationContent" class="invitation-content" aria-hidden="true">
         <div class="scroll-hint" id="scrollHint" role="status" aria-live="polite" aria-label="Scroll for more">
+          <span class="scroll-hint__label">Scroll</span>
           <span class="scroll-hint__chev" aria-hidden="true"></span>
         </div>
         <div class="invitation-stack">
@@ -91,7 +92,7 @@
           <!-- Hero -->
           <div class="hero-panel">
             <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="./assets/fountain-bg.png">
-              <source src="./assets/herobackground%20video.MP4" type="video/mp4">
+              <source src="./assets/herobackground%20video.mp4" type="video/mp4">
             </video>
             <div class="hero-overlay" aria-hidden="true"></div>
             <div class="hero-copy">
@@ -106,7 +107,7 @@
                 Shaharba
               </h1>
             </div>
-            <img class="hero-bottom-edge" src="./assets/nobgherobottom.png" alt="" aria-hidden="true" />
+            <img class="hero-bottom-edge" src="./assets/Mask_group_2_1_Trace.svg" alt="" aria-hidden="true" />
           </div>
 
           <!-- Welcome + countdown -->
@@ -225,29 +226,12 @@
             </div>
           </section>
 
-          <!-- Quranic verses: Arabic (Lateef) + English (Italiana) -->
-          <section class="band band--wine sec-quran-band" aria-label="Verses from the Qur'an">
+          <!-- A quote we love -->
+          <section class="band band--wine sec-quran-band" aria-label="A quote we love">
             <div class="sec-quran-inner">
-              <h2 class="quran-heading">From the Qur&rsquo;an</h2>
-              <blockquote class="quran-verse" cite="https://quran.com/30/21">
-                <p class="quran-ar" lang="ar" dir="rtl">
-                  وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ
-                </p>
-                <p class="quran-en">
-                  And of His signs is that He created for you from yourselves mates that you may find tranquility in them; and He placed between you affection and mercy. Indeed in that are signs for a people who give thought.
-                </p>
-                <p class="quran-ref">Surah Ar-Rūm &middot; 30:21</p>
+              <blockquote class="quran-verse">
+                <p class="quran-en"><span class="qmark">&ldquo;</span>From this day on, we will walk every path together &mdash; building a lifetime of love, faith, and beautiful tomorrows.<span class="qmark">&rdquo;</span></p>
               </blockquote>
-              <blockquote class="quran-verse" cite="https://quran.com/2/201">
-                <p class="quran-ar" lang="ar" dir="rtl">
-                  رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
-                </p>
-                <p class="quran-en">
-                  Our Lord, give us good in this world and good in the Hereafter and protect us from the punishment of the Fire.
-                </p>
-                <p class="quran-ref">Surah al-Baqarah &middot; 2:201</p>
-              </blockquote>
-              <p class="quran-trans-note">English meanings above follow <cite>Sahih International</cite>.</p>
             </div>
           </section>
 
@@ -259,15 +243,7 @@
             <div class="sec-details-inner">
               <p class="details-hope">We hope you will be there.</p>
               <p class="details-signoff">Suhail <span class="details-signoff-amp">&amp;</span> Shaharba</p>
-              <img
-                class="details-couple-photo"
-                src="./assets/couple.jpg"
-                alt="Suhail and Shaharba"
-                width="800"
-                height="533"
-                loading="lazy"
-                decoding="async"
-              />
+              <span class="details-logo" role="img" aria-label="Suhail &amp; Shaharba monogram"></span>
             </div>
           </section>
 

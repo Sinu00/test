@@ -820,6 +820,9 @@ body.intro-scroll-lock {
 /* Date: Italiana (Santiago Orozco) */
 .hero-date {
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 6px 0 0;
   font-family: "Black Mango", sans-serif;
   font-weight: 700;
@@ -1359,6 +1362,16 @@ body.intro-scroll-lock {
   color: var(--text-dark);
   line-height: 1.35;
   margin: 0 0 14px;
+}
+
+.venue-address {
+  font-family: "Black Mango", sans-serif;
+  font-size: clamp(15px, 1.3vw, 19px);
+  font-weight: var(--italiana-weight);
+  letter-spacing: 0.04em;
+  color: var(--text-dark);
+  line-height: 1.4;
+  margin: 0 0 18px;
 }
 
 .venue-map-block {
